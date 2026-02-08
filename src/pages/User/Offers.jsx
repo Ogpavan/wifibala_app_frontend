@@ -14,7 +14,9 @@ export default function Offers() {
   const fetchOffers = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/offers/user");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/offers/user`,
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch offers");

@@ -10,12 +10,14 @@ export default function OfferCarousel() {
   useEffect(() => {
     const fetchSlides = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/carousel");
+        const res = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/carousel`,
+        );
         if (res.ok) {
           const data = await res.json();
           // Filter only active slides and sort by position
           const activeSlides = data
-            .filter(slide => slide.is_active)
+            .filter((slide) => slide.is_active)
             .sort((a, b) => a.position - b.position);
           setSlides(activeSlides);
         }
@@ -61,11 +63,11 @@ export default function OfferCarousel() {
 
   useEffect(() => {
     if (displaySlides.length === 0) return;
-    
+
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % displaySlides.length);
     }, 2000);
-    
+
     return () => clearInterval(timer);
   }, [displaySlides]);
 
@@ -102,11 +104,18 @@ export default function OfferCarousel() {
                     <div className="relative px-4 pt-3 pb-4 overflow-hidden">
                       <div className="w-full h-40 rounded-xl overflow-hidden bg-blue-900">
                         <img
-                          src={item.image_url.startsWith('http') ? item.image_url : `http://localhost:5000${item.image_url}`}
+                          src={
+                            item.image_url.startsWith("http")
+                              ? item.image_url
+                              : `${import.meta.env.VITE_API_BASE_URL}${item.image_url}`
+                          }
                           alt={`Slide ${item.position}`}
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            console.error('Image failed to load:', item.image_url);
+                            console.error(
+                              "Image failed to load:",
+                              item.image_url,
+                            );
                           }}
                         />
                       </div>

@@ -1,8 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Gauge, Database, Calendar, Check, Tv, Wifi, Zap, Shield, Headphones } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  ArrowLeft,
+  Gauge,
+  Database,
+  Calendar,
+  Check,
+  Tv,
+  Wifi,
+  Zap,
+  Shield,
+  Headphones,
+} from "lucide-react";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`;
 
 export default function VipDetails() {
   const { id } = useParams();
@@ -17,17 +28,17 @@ export default function VipDetails() {
         setLoading(true);
         setError(null);
         const response = await fetch(`${BASE_URL}/api/vip-plans/${id}`);
-        
+
         if (!response.ok) {
           throw new Error(`Failed to fetch plan: ${response.status}`);
         }
-        
+
         const data = await response.json();
-        
+
         if (!data || !data.plan_name) {
           throw new Error("Invalid plan data received");
         }
-        
+
         setPlanData(data);
       } catch (err) {
         console.error("Fetch error:", err);
@@ -79,7 +90,7 @@ export default function VipDetails() {
     if (!field) return [];
     if (Array.isArray(field)) return field;
     try {
-      const parsed = typeof field === 'string' ? JSON.parse(field) : field;
+      const parsed = typeof field === "string" ? JSON.parse(field) : field;
       return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
       console.warn("Failed to parse JSON field:", field);
@@ -97,21 +108,24 @@ export default function VipDetails() {
     },
     {
       title: "Unlimited Data",
-      description: `${planData.data_policy || 'Data included'} with no restrictions. Stream and download freely.`,
+      description: `${planData.data_policy || "Data included"} with no restrictions. Stream and download freely.`,
     },
     {
       title: "OTT Subscriptions",
-      description: ottPlatforms.length > 0
-        ? `Free access to ${ottPlatforms.slice(0, 2).join(", ")} and more premium platforms.`
-        : "OTT subscriptions included with this plan.",
+      description:
+        ottPlatforms.length > 0
+          ? `Free access to ${ottPlatforms.slice(0, 2).join(", ")} and more premium platforms.`
+          : "OTT subscriptions included with this plan.",
     },
     {
       title: "24/7 Priority Support",
-      description: "Dedicated VIP support team available round the clock for assistance.",
+      description:
+        "Dedicated VIP support team available round the clock for assistance.",
     },
     {
       title: "Secure Connection",
-      description: "Bank-grade security with encrypted connection for safe browsing.",
+      description:
+        "Bank-grade security with encrypted connection for safe browsing.",
     },
     {
       title: "Quick Installation",
@@ -121,7 +135,7 @@ export default function VipDetails() {
 
   // Add additional benefits to features if they exist
   if (additionalBenefits.length > 0) {
-    additionalBenefits.forEach(benefit => {
+    additionalBenefits.forEach((benefit) => {
       features.push({
         title: benefit,
         description: "Included as part of your VIP plan benefits.",
@@ -140,7 +154,9 @@ export default function VipDetails() {
           <ArrowLeft size={18} />
         </button>
         <h1 className="text-white text-xl font-bold mb-1">VIP Plan Details</h1>
-        <p className="text-white/70 text-xs">Everything about this premium plan</p>
+        <p className="text-white/70 text-xs">
+          Everything about this premium plan
+        </p>
       </div>
 
       {/* White Card */}
@@ -151,7 +167,9 @@ export default function VipDetails() {
             <Wifi className="text-blue-900" size={20} />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-gray-900">{planData.plan_name}</h2>
+            <h2 className="text-lg font-bold text-gray-900">
+              {planData.plan_name}
+            </h2>
             <p className="text-xs text-gray-500">Premium VIP Plan</p>
           </div>
         </div>
@@ -159,16 +177,15 @@ export default function VipDetails() {
         {/* Plan Image */}
         {planData.image_url && (
           <div className="mb-5 rounded-2xl overflow-hidden">
-          <img
-  src={`http://localhost:5000/${planData.image_url}`}
-  alt={planData.plan_name}
-  className="w-full h-48 object-cover"
-  onError={(e) => {
-    e.currentTarget.src =
-      "https://images.unsplash.com/photo-1544197150-ae1b46b04a9a?w=800&q=80";
-  }}
-/>
-
+            <img
+              src={`${import.meta.env.VITE_API_BASE_URL}/${planData.image_url}`}
+              alt={planData.plan_name}
+              className="w-full h-48 object-cover"
+              onError={(e) => {
+                e.currentTarget.src =
+                  "https://images.unsplash.com/photo-1544197150-ae1b46b04a9a?w=800&q=80";
+              }}
+            />
           </div>
         )}
 
@@ -183,7 +200,7 @@ export default function VipDetails() {
         <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-3.5 mb-5">
           <div className="flex items-baseline gap-1">
             <span className="text-2xl font-bold text-blue-900">
-              ₹{planData.price || '599'}
+              ₹{planData.price || "599"}
             </span>
             <span className="text-gray-600 text-xs">/month</span>
           </div>
@@ -201,12 +218,16 @@ export default function VipDetails() {
           <div className="bg-gray-50 rounded-xl p-2.5 text-center">
             <Database className="w-4 h-4 text-blue-900 mx-auto mb-1" />
             <p className="text-[10px] text-gray-500 mb-0.5">Data</p>
-            <p className="text-xs font-bold text-gray-900">{planData.data_policy || 'Unlimited'}</p>
+            <p className="text-xs font-bold text-gray-900">
+              {planData.data_policy || "Unlimited"}
+            </p>
           </div>
           <div className="bg-gray-50 rounded-xl p-2.5 text-center">
             <Calendar className="w-4 h-4 text-blue-900 mx-auto mb-1" />
             <p className="text-[10px] text-gray-500 mb-0.5">Validity</p>
-            <p className="text-xs font-bold text-gray-900">{planData.validity_days || 30} Days</p>
+            <p className="text-xs font-bold text-gray-900">
+              {planData.validity_days || 30} Days
+            </p>
           </div>
         </div>
 
@@ -257,9 +278,9 @@ export default function VipDetails() {
         {/* Terms & Conditions */}
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-2.5 mb-5">
           <p className="text-[10px] text-amber-800 leading-relaxed">
-            Plan validity starts from activation date. Fair usage policy applies. 
-            OTT subscriptions subject to availability and may vary by region. 
-            Prices are subject to change. Taxes may apply.
+            Plan validity starts from activation date. Fair usage policy
+            applies. OTT subscriptions subject to availability and may vary by
+            region. Prices are subject to change. Taxes may apply.
           </p>
         </div>
 
@@ -267,7 +288,9 @@ export default function VipDetails() {
         <div className="mt-6">
           <button
             onClick={() =>
-              alert(`Purchasing ${planData.plan_name} for ₹${planData.price || '599'}/month`)
+              alert(
+                `Purchasing ${planData.plan_name} for ₹${planData.price || "599"}/month`,
+              )
             }
             className="w-full text-white bg-blue-900 py-2.5 rounded-xl font-bold text-sm shadow-xl border-2 border-blue-900 hover:bg-blue-800 transition active:scale-95"
           >

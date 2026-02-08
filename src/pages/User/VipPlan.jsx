@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Crown, Star, Zap, CheckCircle, Wifi } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Crown, Star, Zap, CheckCircle, Wifi } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function VipPlans() {
   const navigate = useNavigate();
@@ -15,17 +15,19 @@ export default function VipPlans() {
   const fetchVipPlans = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/vip-plans');
-      
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/vip-plans`,
+      );
+
       if (!response.ok) {
-        throw new Error('Failed to fetch VIP plans');
+        throw new Error("Failed to fetch VIP plans");
       }
-      
+
       const data = await response.json();
       setVipPlans(data);
       setError(null);
     } catch (err) {
-      console.error('Error fetching VIP plans:', err);
+      console.error("Error fetching VIP plans:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -40,7 +42,7 @@ export default function VipPlans() {
   const parseJsonField = (field) => {
     if (!field) return [];
     if (Array.isArray(field)) return field;
-    if (typeof field === 'string') {
+    if (typeof field === "string") {
       try {
         return JSON.parse(field);
       } catch {
@@ -53,22 +55,22 @@ export default function VipPlans() {
   // Helper to build features array from backend data
   const buildFeatures = (plan) => {
     const features = [];
-    
+
     if (plan.speed_mbps) {
       features.push(`${plan.speed_mbps} Mbps Speed`);
     }
-    
+
     if (plan.data_policy) {
       features.push(plan.data_policy);
     }
-    
+
     if (plan.validity_days) {
       features.push(`${plan.validity_days} Days Validity`);
     }
 
     const ottPlatforms = parseJsonField(plan.ott_platforms);
     if (ottPlatforms.length > 0) {
-      features.push(`OTT: ${ottPlatforms.join(', ')}`);
+      features.push(`OTT: ${ottPlatforms.join(", ")}`);
     }
 
     const additionalBenefits = parseJsonField(plan.additional_benefits);
@@ -87,7 +89,7 @@ export default function VipPlans() {
       "from-purple-600 to-pink-600",
       "from-amber-500 to-orange-600",
       "from-green-600 to-emerald-600",
-      "from-red-600 to-rose-600"
+      "from-red-600 to-rose-600",
     ];
     return colors[index % colors.length];
   };
@@ -116,7 +118,7 @@ export default function VipPlans() {
             <p className="text-red-600 font-semibold">Error loading plans</p>
             <p className="text-red-500 text-sm mt-1">{error}</p>
           </div>
-          <button 
+          <button
             onClick={fetchVipPlans}
             className="bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-semibold"
           >
@@ -138,7 +140,9 @@ export default function VipPlans() {
             </div>
             <div>
               <h1 className="text-base font-bold text-white">VIP Membership</h1>
-              <p className="text-blue-100 text-[10px]">Exclusive benefits & features</p>
+              <p className="text-blue-100 text-[10px]">
+                Exclusive benefits & features
+              </p>
             </div>
           </div>
         </div>
@@ -148,25 +152,31 @@ export default function VipPlans() {
         {/* VIP Plans Section */}
         <div>
           <div className="mb-2">
-            <h2 className="text-base font-bold text-slate-800">Choose Your Plan</h2>
-            <p className="text-slate-600 text-[10px]">Select the perfect plan</p>
+            <h2 className="text-base font-bold text-slate-800">
+              Choose Your Plan
+            </h2>
+            <p className="text-slate-600 text-[10px]">
+              Select the perfect plan
+            </p>
           </div>
 
           {vipPlans.length === 0 ? (
             <div className="text-center py-6">
-              <p className="text-slate-500 text-sm">No VIP plans available at the moment</p>
+              <p className="text-slate-500 text-sm">
+                No VIP plans available at the moment
+              </p>
             </div>
           ) : (
             <div className="space-y-2.5">
               {vipPlans.map((plan, index) => {
                 const features = buildFeatures(plan);
                 const popular = isPopular(index);
-                
+
                 return (
                   <div
                     key={plan.id}
                     className={`bg-white rounded-xl shadow-md overflow-hidden border relative ${
-                      popular ? 'border-yellow-400' : 'border-slate-200'
+                      popular ? "border-yellow-400" : "border-slate-200"
                     }`}
                   >
                     {popular && (
@@ -180,31 +190,35 @@ export default function VipPlans() {
                     <div className="relative h-36 overflow-hidden">
                       {plan.image_url ? (
                         <img
-                          src={`http://localhost:5000${plan.image_url}`}
+                          src={`${import.meta.env.VITE_API_BASE_URL}/${plan.image_url}`}
                           alt={plan.plan_name}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             // Fallback to Unsplash if image fails to load
                             e.target.src = `https://images.unsplash.com/photo-${
-                              index % 3 === 0 ? '1544197150-ae1b46b04a9a' : 
-                              index % 3 === 1 ? '1451187580459-43490279c0fa' : 
-                              '1558618666-fcd25c85cd64'
+                              index % 3 === 0
+                                ? "1544197150-ae1b46b04a9a"
+                                : index % 3 === 1
+                                  ? "1451187580459-43490279c0fa"
+                                  : "1558618666-fcd25c85cd64"
                             }?w=800&q=80`;
                           }}
                         />
                       ) : (
                         <img
                           src={`https://images.unsplash.com/photo-${
-                            index % 3 === 0 ? '1544197150-ae1b46b04a9a' : 
-                            index % 3 === 1 ? '1451187580459-43490279c0fa' : 
-                            '1558618666-fcd25c85cd64'
+                            index % 3 === 0
+                              ? "1544197150-ae1b46b04a9a"
+                              : index % 3 === 1
+                                ? "1451187580459-43490279c0fa"
+                                : "1558618666-fcd25c85cd64"
                           }?w=800&q=80`}
                           alt={plan.plan_name}
                           className="w-full h-full object-cover"
                         />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                      
+
                       {/* Speed Badge */}
                       {plan.speed_mbps && (
                         <div className="absolute top-1.5 left-1.5 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded-lg shadow-md">
@@ -235,25 +249,32 @@ export default function VipPlans() {
                         <span className="text-xl font-bold text-slate-800">
                           {plan.validity_days} Days
                         </span>
-                        <span className="text-slate-500 text-[10px] mb-0.5">validity</span>
+                        <span className="text-slate-500 text-[10px] mb-0.5">
+                          validity
+                        </span>
                       </div>
 
                       {/* Features */}
                       {features.length > 0 && (
                         <div className="space-y-1 mb-2">
                           {features.map((feature, idx) => (
-                            <div key={idx} className="flex items-center gap-1.5">
+                            <div
+                              key={idx}
+                              className="flex items-center gap-1.5"
+                            >
                               <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-md p-0.5 flex-shrink-0">
                                 <CheckCircle className="w-2.5 h-2.5 text-white" />
                               </div>
-                              <span className="text-slate-700 text-[11px]">{feature}</span>
+                              <span className="text-slate-700 text-[11px]">
+                                {feature}
+                              </span>
                             </div>
                           ))}
                         </div>
                       )}
 
                       {/* Button */}
-                      <button 
+                      <button
                         onClick={() => handleViewMore(plan.id)}
                         className="w-full py-1.5 px-3 rounded-lg font-semibold text-[11px] transition-all duration-200 bg-blue-900 text-white hover:bg-blue-800 active:bg-blue-950"
                       >
