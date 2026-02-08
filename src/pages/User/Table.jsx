@@ -8,54 +8,82 @@ export default function PlansTable() {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [providers, setProviders] = useState([]);
+  const [operators, setOperators] = useState([]);
   const [speeds, setSpeeds] = useState([]);
   const [prices, setPrices] = useState([]);
 
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
-    fetch(`${BASE_URL}/api/plans`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch plans");
-        return res.json();
-      })
-      .then((data) => {
-        const formattedPlans = data.plans.map((plan) => ({
+    const fetchData = async () => {
+      try {
+        // Fetch plans and operators in parallel
+        const [plansResponse, operatorsResponse] = await Promise.all([
+          fetch(`${BASE_URL}/api/plans`),
+          fetch(`${BASE_URL}/api/plans/operators`),
+        ]);
+
+        if (!plansResponse.ok || !operatorsResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const plansData = await plansResponse.json();
+        const operatorsData = await operatorsResponse.json();
+
+        setOperators(operatorsData.operators || []);
+
+        // Helper function to get operator name
+        const getOperatorName = (operatorId) => {
+          const operator = operatorsData.operators?.find(
+            (op) => op.id === operatorId,
+          );
+          return operator?.name || `Operator ${operatorId}`;
+        };
+
+        const formattedPlans = plansData.plans.map((plan) => ({
           id: plan.plan_id,
-          company: plan.name,
-          speed: plan.speed.replace(/[^0-9]/g, ""),
+          company: getOperatorName(plan.operator_id),
+          speed: plan.speed
+            ? plan.speed.toString().replace(/[^0-9]/g, "")
+            : "0",
           price: plan.price,
-          validity: `${plan.duration_days} days`,
+          validity: `${plan.validity || 0} days`,
+          operatorId: plan.operator_id,
         }));
 
         setPlans(formattedPlans);
 
         const uniqueProviders = [
           ...new Set(formattedPlans.map((p) => p.company)),
-        ];
+        ].filter(Boolean);
         setProviders(uniqueProviders);
 
-        const uniqueSpeeds = [
-          ...new Set(formattedPlans.map((p) => p.speed)),
-        ].sort((a, b) => parseInt(a) - parseInt(b));
+        const uniqueSpeeds = [...new Set(formattedPlans.map((p) => p.speed))]
+          .filter((speed) => speed && speed !== "0")
+          .sort((a, b) => parseInt(a) - parseInt(b));
         setSpeeds(uniqueSpeeds);
 
-        const uniquePrices = [
-          ...new Set(formattedPlans.map((p) => p.price)),
-        ].sort((a, b) => parseInt(a) - parseInt(b));
+        const uniquePrices = [...new Set(formattedPlans.map((p) => p.price))]
+          .filter(Boolean)
+          .sort((a, b) => parseFloat(a) - parseFloat(b));
         setPrices(uniquePrices);
 
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching plans:", err);
+      } catch (err) {
+        console.error("Error fetching data:", err);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, [BASE_URL]);
 
   const companyFilters = ["All", ...providers];
   const speedFilters = ["All", ...speeds.map((s) => `${s} Mbps`)];
-  const priceFilters = ["All", ...prices.map((p) => `₹${p}`)];
+  const priceFilters = [
+    "All",
+    ...prices.map((p) => `₹${parseFloat(p).toFixed(0)}`),
+  ];
 
   const getFilteredPlans = () => {
     if (selectedFilter === "all") return plans;
@@ -68,9 +96,11 @@ export default function PlansTable() {
       return plans.filter(
         (plan) => plan.speed === selectedFilter.replace(" Mbps", ""),
       );
-    } else {
+    } else if (activeTab === "price") {
       return plans.filter(
-        (plan) => plan.price === selectedFilter.replace("₹", ""),
+        (plan) =>
+          parseFloat(plan.price) ===
+          parseFloat(selectedFilter.replace("₹", "")),
       );
     }
   };
@@ -168,7 +198,9 @@ export default function PlansTable() {
             <Zap className="w-3.5 h-3.5 text-blue-500" />
             <span className="font-bold">{plan.speed}</span> Mbps
           </td>
-          <td className="px-3 py-3 font-bold text-blue-600">₹{plan.price}</td>
+          <td className="px-3 py-3 font-bold text-blue-600">
+            ₹{parseFloat(plan.price).toFixed(0)}
+          </td>
           <td className="px-3 py-3 text-xs">{plan.validity}</td>
         </>
       );
@@ -186,14 +218,18 @@ export default function PlansTable() {
               {plan.company}
             </span>
           </td>
-          <td className="px-3 py-3 font-bold text-blue-600">₹{plan.price}</td>
+          <td className="px-3 py-3 font-bold text-blue-600">
+            ₹{parseFloat(plan.price).toFixed(0)}
+          </td>
           <td className="px-3 py-3 text-xs">{plan.validity}</td>
         </>
       );
     } else {
       return (
         <>
-          <td className="px-3 py-3 font-bold text-blue-600">₹{plan.price}</td>
+          <td className="px-3 py-3 font-bold text-blue-600">
+            ₹{parseFloat(plan.price).toFixed(0)}
+          </td>
           <td className="px-3 py-3">
             <span
               className={`inline-flex px-2 py-1 rounded-md text-xs font-bold ${getCompanyColor(plan.company)}`}

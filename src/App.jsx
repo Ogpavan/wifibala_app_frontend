@@ -51,6 +51,7 @@ function AppRoutes() {
     "/admin/plans",
     "/admin/offers",
     "/admin/complaints",
+    "/user/plans/", // Hide footer on plan details page
   ].some((path) => location.pathname.startsWith(path));
 
   // Protect user dashboard and user pages
