@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  FaBolt,
+  FaCalendarDays,
+  FaCheck,
+  FaCircleQuestion,
+  FaDatabase,
+  FaFaceFrown,
+  FaTriangleExclamation,
+} from "react-icons/fa6";
+import { resolveOttLogo } from "../../utils/ott";
 
 // Reusable feature box component
 const FeatureBox = ({ icon, label, value, color = "blue" }) => {
@@ -10,27 +20,15 @@ const FeatureBox = ({ icon, label, value, color = "blue" }) => {
   };
 
   const icons = {
-    bolt: "M13 10V3L4 14h7v7l9-11h-7z",
-    data: "M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4",
-    calendar:
-      "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
+    bolt: FaBolt,
+    data: FaDatabase,
+    calendar: FaCalendarDays,
   };
+  const Icon = icons[icon] || FaBolt;
 
   return (
-    <div className="bg-gray-50 rounded-xl p-3 text-center">
-      <svg
-        className={`w-5 h-5 ${colors[color]} mx-auto mb-1`}
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d={icons[icon]}
-        />
-      </svg>
+    <div className="bg-gray-50 rounded-md p-3 text-center">
+      <Icon className={`w-5 h-5 ${colors[color]} mx-auto mb-1`} />
       <p className="text-xs text-gray-500">{label}</p>
       <p className="text-sm font-semibold text-gray-800">{value}</p>
     </div>
@@ -53,6 +51,24 @@ export default function Plans() {
   const [subscribedPlans, setSubscribedPlans] = useState([]);
 
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+  const getOperatorLogo = (operator) => {
+    const name = operator?.name?.trim().toLowerCase();
+    const logos = {
+      airtel: "/airtel.png",
+      jio: "/jio.png",
+      bsnl: "/bsnl.png",
+      vi: "/vi.png",
+      voda: "/vi.png",
+      vodafone: "/vi.png",
+    };
+
+    if (name && logos[name]) {
+      return logos[name];
+    }
+
+    return operator?.logo_url || "";
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -181,19 +197,7 @@ export default function Plans() {
         <div className="w-full max-w-md mx-auto mb-24 animate-slide-up rounded-3xl backdrop-blur-lg">
           <div className="flex flex-col items-center justify-center p-8">
             <div className="bg-white rounded-full p-8 mb-6 animate-bounce">
-              <svg
-                className="w-16 h-16 text-green-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+              <FaCheck className="w-16 h-16 text-green-500" />
             </div>
             <h2 className="text-white text-xl font-bold mb-2 animate-fade-in text-center">
               Subscription Request Received!
@@ -220,10 +224,10 @@ export default function Plans() {
 
   if (loading) {
     return (
-      <div className="min-h-screen   flex items-center justify-center">
+      <div className="wifi-page flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading plans...</p>
+          <div className="w-16 h-16 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[var(--color-text-muted)] font-medium">Loading plans...</p>
         </div>
       </div>
     );
@@ -231,30 +235,18 @@ export default function Plans() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-blue-500 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md text-center">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg
-              className="w-8 h-8 text-red-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
+      <div className="wifi-page flex items-center justify-center p-4">
+        <div className="wifi-card p-8 max-w-md text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-md flex items-center justify-center mx-auto mb-4">
+            <FaTriangleExclamation className="w-8 h-8 text-red-500" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          <h3 className="text-lg font-semibold text-[var(--color-text)] mb-2">
             Failed to load plans
           </h3>
-          <p className="text-gray-500 text-sm mb-4">{error}</p>
+          <p className="text-[var(--color-text-muted)] text-sm mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            className="wifi-btn-primary px-6 py-2"
           >
             Try Again
           </button>
@@ -264,14 +256,14 @@ export default function Plans() {
   }
 
   return (
-    <div className="min-h-screen  rounded pb-24">
+    <div className="wifi-page pb-24">
       {/* Hero Section */}
-      <div className="bg-blue-600 text-white px-4 pt-8 pb-16">
+      <div className="wifi-hero wifi-hero-primary px-4 pt-8 pb-16 rounded-b-[28px]">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">
+          <h1 className="wifi-page-title text-2xl md:text-3xl font-bold mb-2">
             Choose Your Perfect Plan
           </h1>
-          <p className="text-blue-100 text-sm md:text-base">
+          <p className="wifi-hero-subtitle text-sm md:text-base">
             High-speed internet plans tailored for your needs
           </p>
         </div>
@@ -279,7 +271,7 @@ export default function Plans() {
 
       {/* Filters Section - Floating Card */}
       <div className="max-w-6xl mx-auto px-4 -mt-8">
-        <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6">
+        <div className="wifi-card p-4 md:p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Operator Filter */}
             <div>
@@ -289,7 +281,7 @@ export default function Plans() {
               <select
                 value={selectedOperator}
                 onChange={(e) => setSelectedOperator(e.target.value)}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="wifi-select px-4 py-2.5 text-sm text-[var(--color-text)]"
               >
                 <option value="all">All Providers</option>
                 {operators.map((op) => (
@@ -308,7 +300,7 @@ export default function Plans() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="wifi-select px-4 py-2.5 text-sm text-[var(--color-text)]"
               >
                 <option value="price-asc">Price: Low to High</option>
                 <option value="price-desc">Price: High to Low</option>
@@ -329,7 +321,7 @@ export default function Plans() {
                 step="100"
                 value={priceRange[1]}
                 onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer accent-[var(--color-primary)]"
               />
             </div>
           </div>
@@ -340,9 +332,9 @@ export default function Plans() {
       <div className="max-w-6xl mx-auto px-4 mt-6">
         {/* Results Count */}
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-[var(--color-text-muted)]">
             Showing{" "}
-            <span className="font-semibold text-gray-700">
+            <span className="font-semibold text-[var(--color-text)]">
               {filteredPlans.length}
             </span>{" "}
             plans
@@ -350,43 +342,32 @@ export default function Plans() {
         </div>
 
         {filteredPlans.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-10 h-10 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+          <div className="wifi-card p-12 text-center">
+            <div className="w-20 h-20 bg-[var(--color-primary-soft)] rounded-md flex items-center justify-center mx-auto mb-4">
+              <FaFaceFrown className="w-10 h-10 text-gray-400" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-1">
+            <h3 className="text-lg font-semibold text-[var(--color-text)] mb-1">
               No plans found
             </h3>
-            <p className="text-gray-500 text-sm">Try adjusting your filters</p>
+            <p className="text-[var(--color-text-muted)] text-sm">Try adjusting your filters</p>
           </div>
         ) : (
           <div className="space-y-8">
             {Object.entries(groupedPlans).map(([operatorId, operatorPlans]) => {
               const operator = getOperator(parseInt(operatorId));
+              const operatorLogo = getOperatorLogo(operator);
               return (
                 <div key={operatorId}>
                   {/* Operator Header */}
                   <div className="flex items-center gap-3 mb-4">
-                    {operator.logo_url ? (
+                    {operatorLogo ? (
                       <img
-                        src={operator.logo_url}
+                        src={operatorLogo}
                         alt={operator.name}
-                        className="w-10 h-10 rounded-lg object-cover bg-white shadow-sm"
+                        className="w-10 h-10 rounded-md object-cover bg-white shadow-sm"
                       />
                     ) : (
-                      <div className="w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 bg-[var(--color-primary)] rounded-md flex items-center justify-center text-white font-bold">
                         {operator.name?.charAt(0) || "?"}
                       </div>
                     )}
@@ -405,10 +386,10 @@ export default function Plans() {
                     {operatorPlans.map((plan) => (
                       <div
                         key={plan.plan_id}
-                        className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
+                        className="wifi-card overflow-hidden hover:shadow-md transition-shadow"
                       >
                         {/* Plan Header */}
-                        <div className="bg-blue-700 p-4 text-white">
+                        <div className="bg-[var(--color-primary)] p-4 text-white">
                           <div className="flex items-baseline justify-between">
                             <div>
                               <span className="text-3xl font-bold">
@@ -447,7 +428,7 @@ export default function Plans() {
                           {/* OTT Platforms */}
                           {plan.ott_platforms &&
                             plan.ott_platforms.length > 0 && (
-                              <div>
+                                  <div>
                                 <p className="text-xs text-gray-500 mb-2">
                                   Included OTT
                                 </p>
@@ -455,13 +436,20 @@ export default function Plans() {
                                   {plan.ott_platforms.slice(0, 4).map((ott) => (
                                     <span
                                       key={ott.ott_id}
-                                      className="px-2 py-1 bg-purple-50 text-purple-700 text-xs rounded-lg font-medium"
+                                      className="inline-flex items-center gap-1.5 px-2 py-1 bg-[var(--color-primary-soft)] text-[var(--color-primary)] text-xs rounded-full font-medium"
                                     >
+                                      {resolveOttLogo(ott) && (
+                                        <img
+                                          src={resolveOttLogo(ott)}
+                                          alt={ott.ott_name}
+                                          className="w-4 h-4 rounded-sm object-contain bg-white"
+                                        />
+                                      )}
                                       {ott.ott_name}
                                     </span>
                                   ))}
                                   {plan.ott_platforms.length > 4 && (
-                                    <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-lg font-medium">
+                                    <span className="px-2 py-1 bg-white border border-[var(--color-border)] text-[var(--color-text-muted)] text-xs rounded-full font-medium">
                                       +{plan.ott_platforms.length - 4} more
                                     </span>
                                   )}
@@ -471,7 +459,7 @@ export default function Plans() {
 
                           {/* Description */}
                           {plan.description && (
-                            <p className="text-xs text-gray-500 line-clamp-2">
+                            <p className="text-xs text-[var(--color-text-muted)] line-clamp-2">
                               {plan.description}
                             </p>
                           )}
@@ -482,16 +470,16 @@ export default function Plans() {
                               onClick={() =>
                                 navigate(`/user/plans/${plan.plan_id}`)
                               }
-                              className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors"
+                              className="flex-1 px-4 py-2.5 bg-white border border-[var(--color-border)] text-[var(--color-text)] text-sm font-medium rounded-md hover:bg-gray-50 transition-colors"
                             >
                               View Details
                             </button>
                             <button
                               onClick={() => handleSubscribeClick(plan)}
-                              className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-xl transition-opacity ${
+                              className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-md transition-opacity ${
                                 subscribedPlans.includes(plan.plan_id)
-                                  ? "bg-green-600 text-white hover:bg-green-700"
-                                  : "bg-blue-700 text-white hover:opacity-90"
+                                ? "bg-green-600 text-white hover:bg-green-700 rounded-md"
+                                  : "bg-[var(--color-primary)] text-white hover:opacity-90 rounded-md"
                               }`}
                             >
                               {subscribedPlans.includes(plan.plan_id)
@@ -512,56 +500,44 @@ export default function Plans() {
 
       {/* Confirmation Popup */}
       {showConfirm && selectedPlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 bg-opacity-20">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 w-96 mx-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="wifi-card p-6 w-96 mx-4">
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-8 h-8 text-blue-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+              <div className="w-16 h-16 bg-[var(--color-primary-soft)] rounded-md flex items-center justify-center mx-auto mb-4">
+                <FaCircleQuestion className="w-8 h-8 text-blue-600" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
+              <h2 className="text-xl font-bold text-[var(--color-text)] mb-2">
                 Confirm Subscription
               </h2>
-              <p className="text-gray-600 text-sm mb-6">
+              <p className="text-[var(--color-text-muted)] text-sm mb-6">
                 Are you sure you want to subscribe to this plan?
               </p>
 
-              <div className="bg-gray-50 rounded-xl p-4 mb-6 text-left">
+              <div className="bg-white border border-[var(--color-border)] rounded-md p-4 mb-6 text-left">
                 <div className="flex items-center gap-3 mb-3">
-                  {getOperator(selectedPlan.operator_id).logo_url ? (
+                  {getOperatorLogo(getOperator(selectedPlan.operator_id)) ? (
                     <img
-                      src={getOperator(selectedPlan.operator_id).logo_url}
+                      src={getOperatorLogo(getOperator(selectedPlan.operator_id))}
                       alt={getOperator(selectedPlan.operator_id).name}
-                      className="w-10 h-10 rounded-lg object-cover"
+                      className="w-10 h-10 rounded-md object-cover"
                     />
                   ) : (
-                    <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
+                    <div className="w-10 h-10 bg-[var(--color-primary)] rounded-md flex items-center justify-center text-white font-bold">
                       {getOperator(selectedPlan.operator_id).name?.charAt(0) ||
                         "?"}
                     </div>
                   )}
                   <div>
-                    <h3 className="font-semibold text-gray-900">
+                    <h3 className="font-semibold text-[var(--color-text)]">
                       {getOperator(selectedPlan.operator_id).name ||
                         "Unknown Provider"}
                     </h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-[var(--color-text-muted)]">
                       {selectedPlan.speed} • {selectedPlan.validity} days
                     </p>
                   </div>
                 </div>
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-[var(--color-primary)]">
                   ₹{selectedPlan.price}
                 </div>
               </div>
@@ -572,13 +548,13 @@ export default function Plans() {
                     setShowConfirm(false);
                     setSelectedPlan(null);
                   }}
-                  className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors"
+                  className="flex-1 px-4 py-3 bg-white border border-[var(--color-border)] text-[var(--color-text)] font-medium rounded-md hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConfirmSubscribe}
-                  className="flex-1 px-4 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors"
+                  className="flex-1 px-4 py-3 bg-[var(--color-primary)] text-white font-medium rounded-md hover:opacity-90 transition-colors"
                 >
                   Confirm
                 </button>

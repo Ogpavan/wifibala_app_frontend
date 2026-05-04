@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  ArrowLeft,
-  Gauge,
-  Database,
-  Calendar,
-  Check,
-  Tv,
-  Wifi,
-  Zap,
-  Shield,
-  Headphones,
-} from "lucide-react";
+  FaArrowLeft,
+  FaCalendarDays,
+  FaCheck,
+  FaDatabase,
+  FaGaugeHigh,
+  FaTv,
+  FaWifi,
+} from "react-icons/fa6";
+import { resolveOttLogo } from "../../utils/ott";
 
 const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`;
 
@@ -56,11 +54,22 @@ export default function VipDetails() {
     }
   }, [id]);
 
+  const parseJsonField = (field) => {
+    if (!field) return [];
+    if (Array.isArray(field)) return field;
+    try {
+      const parsed = typeof field === "string" ? JSON.parse(field) : field;
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 flex flex-col items-center justify-center">
-        <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mb-4"></div>
-        <div className="text-white text-xl font-semibold tracking-wide animate-pulse">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+        <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mb-4" />
+        <div className="text-[var(--color-text)] text-xl font-semibold tracking-wide animate-pulse">
           Loading...
         </div>
       </div>
@@ -69,11 +78,11 @@ export default function VipDetails() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 flex flex-col items-center justify-center p-4">
-        <div className="text-white text-xl mb-4">{error}</div>
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
+        <div className="text-[var(--color-text)] text-xl mb-4">{error}</div>
         <button
           onClick={() => navigate(-1)}
-          className="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm"
+          className="px-4 py-2 bg-white text-[var(--color-primary)] rounded-md text-sm font-semibold"
         >
           Go Back
         </button>
@@ -81,22 +90,7 @@ export default function VipDetails() {
     );
   }
 
-  if (!planData) {
-    return null;
-  }
-
-  // Safe parse for JSON fields
-  const parseJsonField = (field) => {
-    if (!field) return [];
-    if (Array.isArray(field)) return field;
-    try {
-      const parsed = typeof field === "string" ? JSON.parse(field) : field;
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-      console.warn("Failed to parse JSON field:", field);
-      return [];
-    }
-  };
+  if (!planData) return null;
 
   const ottPlatforms = parseJsonField(planData.ott_platforms);
   const additionalBenefits = parseJsonField(planData.additional_benefits);
@@ -119,13 +113,11 @@ export default function VipDetails() {
     },
     {
       title: "24/7 Priority Support",
-      description:
-        "Dedicated VIP support team available round the clock for assistance.",
+      description: "Dedicated VIP support team available round the clock for assistance.",
     },
     {
       title: "Secure Connection",
-      description:
-        "Bank-grade security with encrypted connection for safe browsing.",
+      description: "Bank-grade security with encrypted connection for safe browsing.",
     },
     {
       title: "Quick Installation",
@@ -133,50 +125,45 @@ export default function VipDetails() {
     },
   ];
 
-  // Add additional benefits to features if they exist
-  if (additionalBenefits.length > 0) {
-    additionalBenefits.forEach((benefit) => {
-      features.push({
-        title: benefit,
-        description: "Included as part of your VIP plan benefits.",
-      });
+  additionalBenefits.forEach((benefit) => {
+    features.push({
+      title: benefit,
+      description: "Included as part of your VIP plan benefits.",
     });
-  }
+  });
 
   return (
-    <div className="min-h-screen bg-white pb-20">
-      {/* Blue Header */}
-      <div className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 px-4 pt-4 pb-6">
+    <div className="wifi-page bg-white pb-20">
+      <div className="wifi-hero wifi-hero-primary px-4 pt-4 pb-6 rounded-b-[28px]">
         <button
           onClick={() => navigate(-1)}
-          className="mb-3 w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center text-white"
+          className="mb-3 w-8 h-8 bg-white/15 rounded-md flex items-center justify-center text-white border border-white/20 backdrop-blur-sm"
         >
-          <ArrowLeft size={18} />
+          <FaArrowLeft className="text-[18px]" />
         </button>
-        <h1 className="text-white text-xl font-bold mb-1">VIP Plan Details</h1>
-        <p className="text-white/70 text-xs">
+        <h1 className="wifi-page-title text-xl font-bold mb-1">VIP Plan Details</h1>
+        <p className="wifi-hero-subtitle text-xs">
           Everything about this premium plan
         </p>
       </div>
 
-      {/* White Card */}
-      <div className="bg-white rounded-t-3xl -mt-4 px-4 pt-5 pb-6">
-        {/* Provider/Plan Name */}
+      <div className="wifi-card-strong rounded-t-[32px] -mt-4 px-4 pt-5 pb-6">
         <div className="flex items-center gap-2.5 mb-5">
-          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-            <Wifi className="text-blue-900" size={20} />
+          <div className="w-10 h-10 bg-[var(--color-primary-soft)] rounded-md flex items-center justify-center">
+            <FaWifi className="text-[var(--color-primary)] text-[20px]" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-gray-900">
+            <h2 className="text-lg font-bold text-[var(--color-text)]">
               {planData.plan_name}
             </h2>
-            <p className="text-xs text-gray-500">Premium VIP Plan</p>
+            <p className="text-xs text-[var(--color-text-muted)]">
+              Premium VIP Plan
+            </p>
           </div>
         </div>
 
-        {/* Plan Image */}
         {planData.image_url && (
-          <div className="mb-5 rounded-2xl overflow-hidden">
+          <div className="mb-5 rounded-md overflow-hidden">
             <img
               src={`${import.meta.env.VITE_API_BASE_URL}/${planData.image_url}`}
               alt={planData.plan_name}
@@ -189,84 +176,101 @@ export default function VipDetails() {
           </div>
         )}
 
-        {/* Description */}
         {planData.description && (
-          <p className="text-gray-600 text-xs leading-relaxed mb-5">
+          <p className="text-[var(--color-text-muted)] text-xs leading-relaxed mb-5">
             {planData.description}
           </p>
         )}
 
-        {/* Price */}
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-3.5 mb-5">
+        <div className="bg-[var(--color-primary-soft)] rounded-md p-3.5 mb-5">
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-bold text-blue-900">
+            <span className="text-2xl font-bold text-[var(--color-primary)]">
               ₹{planData.price || "599"}
             </span>
-            <span className="text-gray-600 text-xs">/month</span>
+            <span className="text-[var(--color-text-muted)] text-xs">/month</span>
           </div>
         </div>
 
-        {/* Quick Info */}
         <div className="grid grid-cols-3 gap-2.5 mb-5">
-          <div className="bg-gray-50 rounded-xl p-2.5 text-center">
-            <Gauge className="w-4 h-4 text-blue-900 mx-auto mb-1" />
-            <p className="text-[10px] text-gray-500 mb-0.5">Speed</p>
-            <p className="text-xs font-bold text-gray-900">
+          <div className="bg-white border border-[var(--color-border)] rounded-md p-2.5 text-center">
+            <FaGaugeHigh className="w-4 h-4 text-[var(--color-primary)] mx-auto mb-1" />
+            <p className="text-[10px] text-[var(--color-text-muted)] mb-0.5">Speed</p>
+            <p className="text-xs font-bold text-[var(--color-text)]">
               {planData.speed_mbps || 0} Mbps
             </p>
           </div>
-          <div className="bg-gray-50 rounded-xl p-2.5 text-center">
-            <Database className="w-4 h-4 text-blue-900 mx-auto mb-1" />
-            <p className="text-[10px] text-gray-500 mb-0.5">Data</p>
-            <p className="text-xs font-bold text-gray-900">
+          <div className="bg-white border border-[var(--color-border)] rounded-md p-2.5 text-center">
+            <FaDatabase className="w-4 h-4 text-[var(--color-primary)] mx-auto mb-1" />
+            <p className="text-[10px] text-[var(--color-text-muted)] mb-0.5">Data</p>
+            <p className="text-xs font-bold text-[var(--color-text)]">
               {planData.data_policy || "Unlimited"}
             </p>
           </div>
-          <div className="bg-gray-50 rounded-xl p-2.5 text-center">
-            <Calendar className="w-4 h-4 text-blue-900 mx-auto mb-1" />
-            <p className="text-[10px] text-gray-500 mb-0.5">Validity</p>
-            <p className="text-xs font-bold text-gray-900">
-              {planData.validity_days || 30} Days
+          <div className="bg-white border border-[var(--color-border)] rounded-md p-2.5 text-center">
+            <FaCalendarDays className="w-4 h-4 text-[var(--color-primary)] mx-auto mb-1" />
+            <p className="text-[10px] text-[var(--color-text-muted)] mb-0.5">Validity</p>
+            <p className="text-xs font-bold text-[var(--color-text)]">
+              {planData.validity_days || 0} Days
             </p>
           </div>
         </div>
 
-        {/* OTT Platforms */}
         {ottPlatforms.length > 0 && (
           <div className="mb-5">
-            <div className="flex items-center gap-2 mb-2.5">
-              <Tv className="w-4 h-4 text-blue-900" />
-              <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wide">
-                OTT INCLUDED
-              </h3>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-8 h-8 bg-[var(--color-primary-soft)] rounded-md flex items-center justify-center">
+                <FaTv className="text-[var(--color-primary)] text-[16px]" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-[var(--color-text)]">
+                  OTT Subscriptions Included
+                </h3>
+                <p className="text-[10px] text-[var(--color-text-muted)]">
+                  Stream unlimited content
+                </p>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-1.5">
-              {ottPlatforms.map((platform, i) => (
-                <span
-                  key={i}
-                  className="px-2.5 py-1 bg-blue-50 text-blue-900 rounded-full text-[10px] font-medium"
+            <div className="flex flex-wrap gap-2">
+              {ottPlatforms.map((ott, index) => (
+                <div
+                  key={ott.ott_id || index}
+                  className="flex items-center gap-2 bg-white px-3 py-2 rounded-md border border-[var(--color-border)]"
                 >
-                  {platform}
-                </span>
+                  {resolveOttLogo(ott) ? (
+                    <img
+                      src={resolveOttLogo(ott)}
+                      alt={ott.ott_name || ott}
+                      className="w-6 h-6 rounded-md object-contain bg-white"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 bg-[var(--color-primary-soft)] rounded-md flex items-center justify-center">
+                      <FaTv className="text-[var(--color-primary)] text-[12px]" />
+                    </div>
+                  )}
+                  <span className="text-xs font-medium text-[var(--color-text)]">
+                    {ott.ott_name || ott}
+                  </span>
+                </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Features */}
         <div className="mb-5">
-          <h3 className="text-base font-bold text-gray-900 mb-3">
-            What's Included
+          <h3 className="text-sm font-bold text-[var(--color-text)] mb-3">
+            Plan Features
           </h3>
-          <div className="space-y-3">
+          <div className="grid gap-3">
             {features.map((feature, index) => (
-              <div key={index} className="flex gap-2.5">
-                <div className="w-1.5 h-1.5 bg-blue-900 rounded-full mt-1.5 flex-shrink-0"></div>
+              <div key={index} className="flex gap-3">
+                <div className="w-6 h-6 bg-[var(--color-primary)] rounded-md flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <FaCheck className="text-white text-[14px]" />
+                </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 text-xs mb-0.5">
+                  <h4 className="text-sm font-semibold text-[var(--color-text)]">
                     {feature.title}
                   </h4>
-                  <p className="text-gray-600 text-xs leading-relaxed">
+                  <p className="text-xs text-[var(--color-text-muted)]">
                     {feature.description}
                   </p>
                 </div>
@@ -275,28 +279,12 @@ export default function VipDetails() {
           </div>
         </div>
 
-        {/* Terms & Conditions */}
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-2.5 mb-5">
-          <p className="text-[10px] text-amber-800 leading-relaxed">
-            Plan validity starts from activation date. Fair usage policy
-            applies. OTT subscriptions subject to availability and may vary by
-            region. Prices are subject to change. Taxes may apply.
-          </p>
-        </div>
-
-        {/* Buy Button */}
-        <div className="mt-6">
-          <button
-            onClick={() =>
-              alert(
-                `Purchasing ${planData.plan_name} for ₹${planData.price || "599"}/month`,
-              )
-            }
-            className="w-full text-white bg-blue-900 py-2.5 rounded-xl font-bold text-sm shadow-xl border-2 border-blue-900 hover:bg-blue-800 transition active:scale-95"
-          >
-            Buy Now
-          </button>
-        </div>
+        <button
+          onClick={() => navigate(-1)}
+          className="w-full bg-[var(--color-primary)] text-white py-3 rounded-md font-semibold"
+        >
+          Back to Plans
+        </button>
       </div>
     </div>
   );

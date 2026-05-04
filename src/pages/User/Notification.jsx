@@ -52,38 +52,35 @@ const notifications = [
 
 export default function Notification() {
   return (
-    <div
-      className="min-h-screen pb-24"
-      //   style={{ background: "var(--color-bg-gradient)" }}
-    >
-      <div className="    pb-4">
-        <div className="flex items-center gap-3 mb-6">
-          <FontAwesomeIcon
-            icon={faBell}
-            className="text-2xl"
-            style={{ color: "var(--color-purple)" }}
-          />
-          <h1
-            className="text-2xl font-bold"
-            style={{ color: "var(--color-purple)" }}
-          >
-            Notifications
-          </h1>
+    <div className="wifi-page pb-24">
+      <div className="wifi-hero wifi-hero-primary px-4 pt-6 pb-10 rounded-b-[28px]">
+        <div className="max-w-lg mx-auto">
+          <div className="flex items-center gap-3">
+            <FontAwesomeIcon
+              icon={faBell}
+              className="text-2xl text-white"
+            />
+            <h1 className="wifi-page-title text-2xl font-bold">
+              Notifications
+            </h1>
+          </div>
+          <p className="wifi-hero-subtitle text-sm mt-2">Recent updates and alerts</p>
         </div>
+      </div>
+      <div className="max-w-lg mx-auto px-4 pt-6">
         <div className="flex flex-col gap-4">
           {notifications.length === 0 && (
-            <div className="text-center text-gray-400 py-10">
+            <div className="text-center text-[var(--color-text-muted)] py-10">
               No notifications yet.
             </div>
           )}
           {notifications.map((n) => (
             <div
               key={n.id}
-              className="flex items-start gap-4 bg-white rounded-2xl shadow p-4"
-              style={{ boxShadow: "var(--color-shadow-footer)" }}
+              className="wifi-card flex items-start gap-4 p-4"
             >
               <div
-                className="w-12 h-12 flex items-center justify-center rounded-xl"
+                className="w-12 h-12 flex items-center justify-center rounded-md"
                 style={{ backgroundColor: `${n.color}15` }}
               >
                 <FontAwesomeIcon
@@ -95,19 +92,19 @@ export default function Notification() {
               <div className="flex-1">
                 <h3
                   className="font-semibold mb-1"
-                  style={{ color: "var(--color-text-primary)" }}
+                  style={{ color: "var(--color-text)" }}
                 >
                   {n.title}
                 </h3>
                 <p
                   className="text-sm mb-1"
-                  style={{ color: "var(--color-text-secondary)" }}
+                  style={{ color: "var(--color-text-muted)" }}
                 >
                   {n.message}
                 </p>
                 <span
                   className="text-xs"
-                  style={{ color: "var(--color-gray)" }}
+                  style={{ color: "var(--color-text-muted)" }}
                 >
                   {n.time}
                 </span>

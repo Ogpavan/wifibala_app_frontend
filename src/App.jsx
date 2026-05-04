@@ -27,10 +27,14 @@ import Speedtest from "./pages/User/VipPlan";
 import Notification from "./pages/User/Notification";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import VipDetails from "./pages/User/VipDetails.jsx";
+import TermsPage from "./pages/Terms.jsx";
+import PrivacyPolicyPage from "./pages/PrivacyPolicy.jsx";
 
 
 import Signin from "./Auth/Signin.jsx";
 import Signup from "./Auth/Signup.jsx";
+import { applyThemeColor } from "./utils/theme.js";
+import { fetchAppSettings } from "./utils/settings.js";
 
 // Default route component that redirects based on auth
 function DefaultRoute() {
@@ -46,6 +50,8 @@ function AppRoutes() {
   const hideFooter = [
     "/signin",
     "/signup",
+    "/terms",
+    "/privacy-policy",
     "/admin/dashboard",
     "/admin/users",
     "/admin/plans",
@@ -90,7 +96,7 @@ function AppRoutes() {
   }, [location]);
 
   // Check if current route is signin or signup
-  const isAuthPage = ["/signin", "/signup"].some((path) =>
+  const isAuthPage = ["/signin", "/signup", "/terms", "/privacy-policy"].some((path) =>
     location.pathname.startsWith(path),
   );
 
@@ -101,6 +107,8 @@ function AppRoutes() {
         <Routes>
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         </Routes>
       ) : (
         // All other pages inside Container/Box
@@ -113,6 +121,8 @@ function AppRoutes() {
               {/* Auth Pages */}
               <Route path="/signin" element={<Signin />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
 
               {/* User Pages (all protected) */}
               <Route path="/user/dashboard" element={<Home />} />
@@ -143,6 +153,38 @@ function AppRoutes() {
 }
 
 function App() {
+  useEffect(() => {
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+    const applyStoredTheme = () => {
+      const stored = window.localStorage.getItem("app_theme_color");
+      if (stored) {
+        applyThemeColor(stored);
+      }
+    };
+
+    const cacheSettings = (settings) => {
+      window.localStorage.setItem("app_settings", JSON.stringify(settings));
+    };
+
+    const fetchTheme = async () => {
+      try {
+        const settings = await fetchAppSettings(baseUrl);
+        cacheSettings(settings);
+        const themeColor =
+          settings?.theme_color ||
+          window.localStorage.getItem("app_theme_color") ||
+          "blue";
+        applyThemeColor(themeColor);
+        window.localStorage.setItem("app_theme_color", themeColor);
+      } catch {
+        applyStoredTheme();
+      }
+    };
+
+    fetchTheme();
+  }, []);
+
   return (
     <AuthProvider>
       <Router>

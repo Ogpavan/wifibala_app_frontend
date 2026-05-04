@@ -1,14 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { Wifi, Zap, Headphones, Wallet, Phone, MessageCircle } from "lucide-react";
-import { FaWhatsapp } from "react-icons/fa"
+import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faHeadset,
+  faPhone,
+  faWallet,
+} from "@fortawesome/free-solid-svg-icons";
+import { FaWhatsapp } from "react-icons/fa";
 
 import Ring from "./Portchange";
 import Carousel from "./Carousel";
 import Table from "./Table";
+import { fetchAppSettings, getTelHref, getWhatsAppHref } from "../../utils/settings";
 
 export default function Home() {
   const [activeCard, setActiveCard] = useState(null);
   const [walletBalance, setWalletBalance] = useState(0);
+  const [contactSettings, setContactSettings] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("app_settings")) || {};
+    } catch {
+      return {};
+    }
+  });
+  const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
   const userName = user?.name || "User";
 
@@ -17,6 +32,20 @@ export default function Home() {
       fetchWalletBalance();
     }
   }, [user?.id]);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const settings = await fetchAppSettings(import.meta.env.VITE_API_BASE_URL);
+        setContactSettings(settings);
+        localStorage.setItem("app_settings", JSON.stringify(settings));
+      } catch (error) {
+        console.error("Failed to load contact settings:", error);
+      }
+    };
+
+    loadSettings();
+  }, []);
 
   const fetchWalletBalance = async () => {
     try {
@@ -37,69 +66,72 @@ export default function Home() {
       title: "Live Support",
       value: "24/7",
       subtitle: "Available Now",
-      icon: Headphones,
-      gradient: "bg-blue-900",
-      iconBg: "bg-blue-50",
-      iconColor: "text-blue-900",
+      icon: faHeadset,
+      gradient: "from-[var(--color-primary)] to-[var(--color-accent)]",
+      iconBg: "bg-[var(--color-primary-soft)]",
+      iconColor: "text-[var(--color-primary)]",
     },
     {
       id: 4,
       title: "Wallet",
       value: `₹${walletBalance}`,
       subtitle: "Available Balance",
-      icon: Wallet,
-      gradient: "bg-blue-900",
-      iconBg: "bg-blue-50",
-      iconColor: "text-blue-600",
+      icon: faWallet,
+      gradient: "from-[var(--color-primary)] to-[var(--color-accent)]",
+      iconBg: "bg-[var(--color-primary-soft)]",
+      iconColor: "text-[var(--color-primary)]",
     },
   ];
 
+  const callHref = getTelHref(contactSettings.primary_number);
+  const whatsappHref =
+    getWhatsAppHref(contactSettings.whatsapp_number) ||
+    getWhatsAppHref(contactSettings.primary_number);
+  const displayPhone = contactSettings.primary_number || "+91 76681 29807";
+  const displayWhatsApp =
+    contactSettings.whatsapp_number ||
+    contactSettings.primary_number ||
+    "+91 76681 29807";
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div className="wifi-page bg-white">
       {/* Header */}
-      <div className="bg-blue-900 px-3 pt-3 pb-16 rounded-b-3xl shadow-lg">
+      <div className="wifi-hero wifi-hero-primary px-4 pt-4 pb-16 rounded-b-[28px]">
         <div className="flex items-start justify-between mb-2">
           {/* User */}
           <div className="flex items-center gap-2">
             <button
               onClick={() => (window.location.href = "/user/profile")}
-              className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-semibold border-2 border-white/30"
+              className="w-10 h-10 rounded-md bg-[var(--color-primary-soft)] flex items-center justify-center text-[var(--color-primary)] font-semibold border border-[var(--color-border)]"
             >
               {userName[0]}
             </button>
             <div>
-              <p className="text-blue-100 text-xs">Welcome back!</p>
-              <h1 className="text-white text-base font-semibold">
+              <p className="text-white/80 text-xs">Welcome back!</p>
+              <h1 className="wifi-page-title text-base font-semibold">
                 Hey, {userName}
               </h1>
             </div>
           </div>
 
-          {/* Phone Numbers */}
-
           <div className="flex flex-col items-end gap-2">
-            {/* Call Now */}
             <a
-              href="tel:+917668129807"
-              className="flex items-center justify-center gap-2 text-white text-xs font-medium
-               bg-white/20 px-3 py-2 rounded-full hover:bg-white/30 transition
-               backdrop-blur w-32"
+              href={callHref || "tel:+917668129807"}
+              title={displayPhone}
+              className="flex items-center gap-1.5 text-sm font-semibold text-white hover:text-white/80 transition"
             >
-              <Phone className="w-4 h-4 text-white" />
-              Call Now
+              <FontAwesomeIcon icon={faPhone} className="h-4 w-4" />
+              {displayPhone}
             </a>
-
-            {/* WhatsApp Us */}
             <a
-              href="https://wa.me/917668129807"
+              href={whatsappHref || "https://wa.me/917668129807"}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 text-white text-xs font-medium
-               bg-white/20 px-3 py-2 rounded-full hover:bg-white/30 transition
-               backdrop-blur w-32"
+              title={displayWhatsApp}
+              className="flex items-center gap-1.5 text-sm font-semibold text-white hover:text-white/80 transition"
             >
-              <FaWhatsapp className="w-4 h-4 text-white" />
-              WhatsApp Us
+              <FaWhatsapp className="h-4 w-4 text-[#25D366]" />
+              {displayWhatsApp}
             </a>
           </div>
 
@@ -108,7 +140,7 @@ export default function Home() {
         </div>
 
         {/* Date */}
-        <p className="text-blue-50 text-xs mt-1 text-center">
+        <p className="text-white/80 text-xs mt-1 text-center">
           {new Date().toLocaleDateString("en-US", {
             weekday: "long",
             month: "short",
@@ -122,32 +154,43 @@ export default function Home() {
       <div className="px-3 -mt-10 pb-6">
         <div className="grid grid-cols-2 gap-2">
           {cards.map((card) => {
-            const Icon = card.icon;
             return (
               <div
                 key={card.id}
-                onClick={() => setActiveCard(card.id)}
-                className={`bg-white rounded-xl p-3 shadow-lg transition-all cursor-pointer ${activeCard === card.id
+                onClick={() => {
+                  setActiveCard(card.id);
+                  if (card.id === 3) {
+                    navigate("/user/complaints");
+                  }
+                }}
+                className={`wifi-card p-4 transition-all cursor-pointer ${activeCard === card.id
                     ? "scale-105 shadow-xl"
                     : "hover:scale-102"
                   }`}
               >
-                <div className="flex flex-col h-full">
-                  <div
-                    className={`${card.iconBg} w-9 h-9 rounded-lg flex items-center justify-center mb-2`}
+                <div className="flex items-start justify-between gap-3 h-full">
+                  <div>
+                    <div
+                    className={`${card.iconBg} w-10 h-10 rounded-md flex items-center justify-center mb-2`}
                   >
-                    <Icon className={`w-4 h-4 ${card.iconColor}`} />
+                    <FontAwesomeIcon icon={card.icon} className={`h-4 w-4 ${card.iconColor}`} />
                   </div>
 
-                  <p className="text-gray-500 text-xs font-medium">
+                  <p className="text-[var(--color-text-muted)] text-xs font-medium">
                     {card.title}
                   </p>
-                  <h3
-                    className={`text-xl font-bold bg-gradient-to-r ${card.gradient} bg-clip-text text-transparent`}
-                  >
-                    {card.value}
-                  </h3>
-                  <p className="text-gray-400 text-xs">{card.subtitle}</p>
+                  </div>
+
+                  <div className="text-right">
+                    <h3
+                      className={`text-xl font-bold bg-gradient-to-r ${card.gradient} bg-clip-text text-transparent leading-tight`}
+                    >
+                      {card.value}
+                    </h3>
+                    <p className="text-[var(--color-text-muted)] text-xs mt-1">
+                      {card.subtitle}
+                    </p>
+                  </div>
                 </div>
               </div>
             );

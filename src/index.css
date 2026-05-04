@@ -1,67 +1,206 @@
 @import "tailwindcss";
 
 :root {
-  --color-purple: #2158cf;
-  --color-indigo: #2158cf;
-  --color-gray: #bdbdbd;
-  --color-bg-footer: #fff;
-  --color-shadow-footer: 0 0 24px 0 rgba(124, 58, 237, 0.1);
-  --color-shadow-center: 0 4px 24px 0 rgba(124, 58, 237, 0.18);
-  --color-bg-light: #f8fafc;
-  --color-bg-gradient: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
-  --color-card-bg: #ffffff;
-  --color-text-primary: #1e293b;
-  --color-text-secondary: #64748b;
-  --color-success: #10b981;
+  --color-primary: #0f3d91;
+  --color-primary-strong: #0b2f70;
+  --color-primary-soft: #eaf1ff;
+  --color-accent: #1f8fff;
+  --color-surface: #ffffff;
+  --color-surface-muted: #ffffff;
+  --color-border: #d9e2f2;
+  --color-text: #10213a;
+  --color-text-muted: #64748b;
+  --color-success: #16a34a;
   --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-pink: #ec4899;
-  --color-emerald: #10b981;
-  --color-cyan: #06b6d4;
-  --color-orange: #f97316;
+  --color-error: #dc2626;
+  --color-shadow: 0 18px 40px rgba(15, 61, 145, 0.08);
+  --color-shadow-soft: 0 10px 24px rgba(15, 61, 145, 0.06);
+  --radius-card: 12px;
+  --radius-control: 6px;
+  --radius-pill: 6px;
 }
 
-/* 
+@layer base {
+  html {
+    color: var(--color-text);
+    background: #ffffff;
+  }
 
-:root {
-  --color-blue-900: #1e3a8a;
-  --color-blue-800: #1e40af;
-  --color-blue-700: #2563eb;
-  --color-blue-600: #2563eb;
-  --color-blue-500: #3b82f6;
-  --color-blue-400: #60a5fa;
-  --color-blue-300: #93c5fd;
-  --color-blue-200: #bfdbfe;
-  --color-blue-100: #dbeafe;
-  --color-blue-50: #eff6ff;
+  body {
+    min-height: 100vh;
+    margin: 0;
+    color: var(--color-text);
+    background: transparent;
+    font-family:
+      Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      sans-serif;
+  }
 
-  --color-indigo: #6366f1;
-  --color-gray: #bdbdbd;
-  --color-bg-footer: #fff;
-  --color-shadow-footer: 0 0 24px 0 rgba(37, 99, 235, 0.08);
-  --color-shadow-center: 0 4px 24px 0 rgba(37, 99, 235, 0.15);
-  --color-bg-light: var(--color-blue-50);
-  --color-bg-gradient: linear-gradient(180deg, var(--color-blue-50) 0%, var(--color-blue-100) 100%);
-  --color-card-bg: #ffffff;
-  --color-text-primary: #1e293b;
-  --color-text-secondary: #64748b;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-pink: #ec4899;
-  --color-emerald: #10b981;
-  --color-cyan: #06b6d4;
-  --color-orange: #f97316;
+  #root {
+    min-height: 100vh;
+  }
 
-  /* App theme overrides */
-  /* --color-primary: var(--color-blue-700);
-  --color-primary-dark: var(--color-blue-900);
-  --color-primary-light: var(--color-blue-400);
-  --color-accent: var(--color-indigo);
-  --color-bg-main: var(--color-bg-gradient);
-  --color-btn-gradient: linear-gradient(90deg, var(--color-blue-700) 0%, var(--color-blue-500) 100%);
-  --color-btn-hover: var(--color-blue-800);
-  --color-btn-active: var(--color-blue-900);
-  --color-border: var(--color-blue-200);
-  --color-shadow-btn: 0 2px 8px 0 rgba(37, 99, 235, 0.12);
-} */ */
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .wifi-page {
+    min-height: 100vh;
+    padding-bottom: 6rem;
+  }
+
+  .wifi-page-shell {
+    width: 100%;
+    max-width: 72rem;
+    margin: 0 auto;
+  }
+
+  .wifi-hero {
+    position: relative;
+    overflow: hidden;
+    background: #ffffff;
+    color: var(--color-text);
+    border-radius: 0 0 12px 12px;
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: none;
+  }
+
+  .wifi-hero::after {
+    content: none;
+  }
+
+  .wifi-card {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(217, 226, 242, 0.9);
+    border-radius: var(--radius-card);
+    box-shadow: var(--color-shadow);
+    backdrop-filter: blur(10px);
+  }
+
+  .wifi-card-strong {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--radius-card) + 2px);
+    box-shadow: var(--color-shadow);
+  }
+
+  .wifi-surface {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-control);
+  }
+
+  .wifi-input,
+  .wifi-select,
+  .wifi-textarea {
+    width: 100%;
+    border: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--color-text);
+    border-radius: var(--radius-control);
+    padding: 0.875rem 1rem;
+    outline: none;
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .wifi-input:focus,
+  .wifi-select:focus,
+  .wifi-textarea:focus {
+    border-color: rgba(31, 143, 255, 0.55);
+    box-shadow: 0 0 0 4px rgba(31, 143, 255, 0.12);
+  }
+
+  .wifi-btn-primary,
+  .wifi-btn-secondary,
+  .wifi-btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-control);
+    padding: 0.85rem 1rem;
+    font-weight: 700;
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease,
+      background-color 160ms ease,
+      opacity 160ms ease;
+  }
+
+  .wifi-btn-primary {
+    color: white;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    box-shadow: 0 14px 26px rgba(15, 61, 145, 0.18);
+  }
+
+  .wifi-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 30px rgba(15, 61, 145, 0.22);
+  }
+
+  .wifi-btn-secondary {
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+
+  .wifi-btn-danger {
+    color: white;
+    background: linear-gradient(135deg, #e24b4b 0%, #c92a2a 100%);
+    box-shadow: 0 14px 26px rgba(201, 42, 42, 0.16);
+  }
+
+  .wifi-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: var(--radius-pill);
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .wifi-badge-soft {
+    color: var(--color-primary);
+    background: var(--color-primary-soft);
+  }
+
+  .wifi-muted {
+    color: var(--color-text-muted);
+  }
+
+  .wifi-page-title {
+    color: var(--color-primary);
+  }
+
+  .wifi-hero-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    color: white;
+    border-bottom-color: transparent;
+  }
+
+  .wifi-hero-primary .wifi-page-title {
+    color: white;
+  }
+
+  .wifi-hero-primary .wifi-hero-subtitle {
+    color: rgb(255 255 255 / 0.8);
+  }
+
+  .wifi-icon-surface {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+  }
+}

@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Send,
-  CheckCircle,
-  Phone,
-  MessageCircle,
-  Mail,
-  AlertCircle,
-} from "lucide-react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+  FaCircleCheck,
+  FaCircleExclamation,
+  FaEnvelope,
+  FaPaperPlane,
+  FaPhone,
+  FaTriangleExclamation,
+} from "react-icons/fa6";
+import { FaWhatsapp } from "react-icons/fa";
+import { fetchAppSettings, getTelHref, getWhatsAppHref } from "../../utils/settings";
 
 export default function HelpComplaintCenter() {
   const [formData, setFormData] = useState({
@@ -21,6 +21,27 @@ export default function HelpComplaintCenter() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [complaintId, setComplaintId] = useState(null);
+  const [contactSettings, setContactSettings] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("app_settings")) || {};
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const settings = await fetchAppSettings(import.meta.env.VITE_API_BASE_URL);
+        setContactSettings(settings);
+        localStorage.setItem("app_settings", JSON.stringify(settings));
+      } catch (err) {
+        console.error("Failed to load contact settings:", err);
+      }
+    };
+
+    loadSettings();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -87,59 +108,62 @@ export default function HelpComplaintCenter() {
   };
 
   const handleCall = () => {
-    window.location.href = "tel:+1234567890";
+    const href = getTelHref(contactSettings.primary_number);
+    window.location.href = href || "tel:+1234567890";
   };
 
   const handleWhatsApp = () => {
-    window.open(
-      "https://wa.me/1234567890?text=Hi, I need help with...",
-      "_blank",
-    );
+    const href =
+      getWhatsAppHref(contactSettings.whatsapp_number) ||
+      getWhatsAppHref(contactSettings.primary_number) ||
+      "https://wa.me/1234567890";
+    window.open(`${href}?text=Hi, I need help with...`, "_blank");
   };
+
+  const supportPhone = contactSettings.primary_number || "+1 (234) 567-890";
+  const supportWhatsApp =
+    contactSettings.whatsapp_number ||
+    contactSettings.primary_number ||
+    "24/7 Support";
+  const supportEmail = contactSettings.email_id || "support@example.com";
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-6 pb-32">
+      <div className="wifi-page flex items-center justify-center px-6 pb-32">
         <div className="text-center max-w-sm">
-          <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="text-white" size={32} />
+          <div className="w-16 h-16 bg-green-500 rounded-3xl flex items-center justify-center mx-auto mb-4">
+            <FaCircleCheck className="text-white text-[32px]" />
           </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-1">
+          <h2 className="text-xl font-bold text-[var(--color-text)] mb-1">
             Complaint Registered
           </h2>
-          <p className="text-gray-600 text-sm mb-1">ID: #{complaintId}</p>
-          <p className="text-gray-500 text-xs">We'll respond within 24 hours</p>
+          <p className="text-[var(--color-text-muted)] text-sm mb-1">ID: #{complaintId}</p>
+          <p className="text-[var(--color-text-muted)] text-xs">We'll respond within 24 hours</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white pb-18">
+    <div className="wifi-page pb-18">
       {/* Header */}
-      <div className="bg-blue-900 text-white px-6 py-6">
-        <h1 className="text-xl font-bold mb-1">Help & Support</h1>
-        <p className="text-blue-100 text-xs">We're here to help</p>
+      <div className="wifi-hero wifi-hero-primary px-6 py-6 rounded-b-[28px] text-center">
+        <h1 className="wifi-page-title text-xl font-bold mb-1">Help & Support</h1>
+        <p className="wifi-hero-subtitle text-xs">We're here to help</p>
       </div>
 
       <div className="px-6 py-6 max-w-lg mx-auto">
         {/* Register Complaint Form */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
-            <FontAwesomeIcon
-              icon={faTriangleExclamation}
-              className="text-blue-900 text-base"
-            />
-            <h2 className="text-base font-bold text-gray-800">Need Help?</h2>
+            <FaTriangleExclamation className="text-[var(--color-primary)] text-base" />
+            <h2 className="text-base font-bold text-[var(--color-text)]">Need Help?</h2>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-              <AlertCircle
-                className="text-red-500 mt-0.5 flex-shrink-0"
-                size={16}
-              />
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-start gap-2">
+              <FaCircleExclamation className="text-red-500 mt-0.5 flex-shrink-0 text-[16px]" />
               <p className="text-red-700 text-sm">{error}</p>
             </div>
           )}
@@ -147,7 +171,7 @@ export default function HelpComplaintCenter() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Subject */}
             <div>
-              <label className="block text-gray-700 font-medium mb-1.5 text-sm">
+              <label className="block text-[var(--color-text)] font-medium mb-1.5 text-sm">
                 Subject *
               </label>
               <input
@@ -158,14 +182,14 @@ export default function HelpComplaintCenter() {
                 placeholder="Brief description"
                 maxLength="200"
                 disabled={loading}
-                className="w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:border-blue-900 focus:ring-1 focus:ring-blue-900 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="wifi-input px-3 py-2.5 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 required
               />
             </div>
 
             {/* Category */}
             <div>
-              <label className="block text-gray-700 font-medium mb-1.5 text-sm">
+              <label className="block text-[var(--color-text)] font-medium mb-1.5 text-sm">
                 Category
               </label>
               <select
@@ -173,7 +197,7 @@ export default function HelpComplaintCenter() {
                 value={formData.category}
                 onChange={handleChange}
                 disabled={loading}
-                className="w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:border-blue-900 focus:ring-1 focus:ring-blue-900 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="wifi-select px-3 py-2.5 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <option value="general">General</option>
                 <option value="technical">Technical Issue</option>
@@ -186,7 +210,7 @@ export default function HelpComplaintCenter() {
 
             {/* Priority */}
             <div>
-              <label className="block text-gray-700 font-medium mb-1.5 text-sm">
+              <label className="block text-[var(--color-text)] font-medium mb-1.5 text-sm">
                 Priority
               </label>
               <select
@@ -194,7 +218,7 @@ export default function HelpComplaintCenter() {
                 value={formData.priority}
                 onChange={handleChange}
                 disabled={loading}
-                className="w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:border-blue-900 focus:ring-1 focus:ring-blue-900 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="wifi-select px-3 py-2.5 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -205,7 +229,7 @@ export default function HelpComplaintCenter() {
 
             {/* Description */}
             <div>
-              <label className="block text-gray-700 font-medium mb-1.5 text-sm">
+              <label className="block text-[var(--color-text)] font-medium mb-1.5 text-sm">
                 Description *
               </label>
               <textarea
@@ -215,7 +239,7 @@ export default function HelpComplaintCenter() {
                 placeholder="Describe your issue..."
                 rows="4"
                 disabled={loading}
-                className="w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:border-blue-900 focus:ring-1 focus:ring-blue-900 outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="wifi-textarea px-3 py-2.5 text-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                 required
               ></textarea>
             </div>
@@ -224,7 +248,7 @@ export default function HelpComplaintCenter() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-900 text-white font-semibold py-3 rounded-lg hover:bg-blue-800 transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="wifi-btn-primary w-full text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -233,7 +257,7 @@ export default function HelpComplaintCenter() {
                 </>
               ) : (
                 <>
-                  <Send size={18} />
+                  <FaPaperPlane className="text-[18px]" />
                   Submit Complaint
                 </>
               )}
@@ -242,8 +266,8 @@ export default function HelpComplaintCenter() {
         </div>
 
         {/* Need More Help Section */}
-        <div className="border-t border-gray-200 pt-6">
-          <h2 className="text-base font-bold text-gray-800 mb-3">
+        <div className="border-t border-[var(--color-border)] pt-6">
+          <h2 className="text-base font-bold text-[var(--color-text)] mb-3">
             Need More Help?
           </h2>
 
@@ -251,39 +275,39 @@ export default function HelpComplaintCenter() {
             {/* Call Option */}
             <button
               onClick={handleCall}
-              className="w-full flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-all"
+              className="w-full flex items-center gap-3 p-3 bg-[var(--color-primary-soft)] border border-[var(--color-border)] rounded-md hover:scale-[1.01] transition-all"
             >
-              <div className="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0">
-                <Phone className="text-white" size={20} />
+              <div className="w-10 h-10 bg-[var(--color-primary)] rounded-md flex items-center justify-center flex-shrink-0">
+                <FaPhone className="text-white text-[20px]" />
               </div>
               <div className="text-left flex-1">
-                <p className="font-semibold text-gray-800 text-sm">Call Us</p>
-                <p className="text-xs text-gray-600">+1 (234) 567-890</p>
+                <p className="font-semibold text-[var(--color-text)] text-sm">Call Us</p>
+                <p className="text-xs text-[var(--color-text-muted)]">{supportPhone}</p>
               </div>
             </button>
 
             {/* WhatsApp Option */}
             <button
               onClick={handleWhatsApp}
-              className="w-full flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-all"
+              className="w-full flex items-center gap-3 p-3 bg-green-50 border border-green-100 rounded-md hover:scale-[1.01] transition-all"
             >
-              <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
-                <MessageCircle className="text-white" size={20} />
+              <div className="w-10 h-10 bg-green-600 rounded-md flex items-center justify-center flex-shrink-0">
+                <FaWhatsapp className="text-white text-[20px]" />
               </div>
               <div className="text-left flex-1">
-                <p className="font-semibold text-gray-800 text-sm">WhatsApp</p>
-                <p className="text-xs text-gray-600">24/7 Support</p>
+                <p className="font-semibold text-[var(--color-text)] text-sm">WhatsApp</p>
+                <p className="text-xs text-[var(--color-text-muted)]">{supportWhatsApp}</p>
               </div>
             </button>
 
             {/* Email Support */}
-            <div className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-              <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
-                <Mail className="text-white" size={20} />
+            <div className="flex items-center gap-3 p-3 bg-white border border-[var(--color-border)] rounded-md">
+              <div className="w-10 h-10 bg-slate-600 rounded-md flex items-center justify-center flex-shrink-0">
+                <FaEnvelope className="text-white text-[20px]" />
               </div>
               <div className="text-left flex-1">
-                <p className="font-semibold text-gray-800 text-sm">Email</p>
-                <p className="text-xs text-gray-600">support@example.com</p>
+                <p className="font-semibold text-[var(--color-text)] text-sm">Email</p>
+                <p className="text-xs text-[var(--color-text-muted)]">{supportEmail}</p>
               </div>
             </div>
           </div>

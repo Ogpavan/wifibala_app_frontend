@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Percent, Wrench, Zap } from "lucide-react";
+import { FaBolt, FaPercent, FaScrewdriverWrench } from "react-icons/fa6";
 
 export default function OfferCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -37,24 +37,24 @@ export default function OfferCarousel() {
       title: "20% Off",
       subtitle: "On First Recharge",
       description: "New users get instant discount",
-      icon: Percent,
-      accentColor: "from-cyan-400 to-blue-500",
+      icon: FaPercent,
+      accentColor: "from-slate-200 to-white",
     },
     {
       id: 2,
       title: "No Installation",
       subtitle: "Fees",
       description: "Free setup for all new connections",
-      icon: Wrench,
-      accentColor: "from-purple-400 to-pink-500",
+      icon: FaScrewdriverWrench,
+      accentColor: "from-slate-200 to-white",
     },
     {
       id: 3,
       title: "Unbeatable",
       subtitle: "Speed",
       description: "Up to 1 Gbps fiber connection",
-      icon: Zap,
-      accentColor: "from-orange-400 to-red-500",
+      icon: FaBolt,
+      accentColor: "from-slate-200 to-white",
     },
   ];
 
@@ -75,7 +75,7 @@ export default function OfferCarousel() {
   if (loading) {
     return (
       <div className="relative px-3 pt-0 pb-2">
-        <div className="relative overflow-hidden rounded-2xl bg-blue-900 h-48 flex items-center justify-center">
+        <div className="relative overflow-hidden rounded-md bg-white border border-[var(--color-border)] h-48 flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function OfferCarousel() {
       {/* Root container – NO top spacing */}
       <div className="relative px-3 pt-0 pb-2">
         {/* Carousel */}
-        <div className="relative overflow-hidden rounded-2xl">
+        <div className="relative overflow-hidden rounded-md">
           {/* Solid background */}
           <div className="absolute inset-0 bg-white" />
 
@@ -102,7 +102,7 @@ export default function OfferCarousel() {
                 return (
                   <div key={item.id || index} className="min-w-full">
                     <div className="relative px-4 pt-3 pb-4 overflow-hidden">
-                      <div className="w-full h-40 rounded-xl overflow-hidden bg-blue-900">
+                        <div className="w-full h-40 rounded-md overflow-hidden bg-white border border-[var(--color-border)]">
                         <img
                           src={
                             item.image_url.startsWith("http")
@@ -141,7 +141,7 @@ export default function OfferCarousel() {
                     </div>
 
                     {/* Glass card */}
-                    <div className="relative backdrop-blur-xl bg-white/10 rounded-xl p-4 shadow-2xl">
+                    <div className="relative backdrop-blur-xl bg-white/10 rounded-md p-4 shadow-2xl">
                       {/* Badge */}
                       <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-sm rounded-full px-2.5 py-1 mb-3">
                         <Icon className="w-3 h-3 text-white" />
@@ -165,14 +165,14 @@ export default function OfferCarousel() {
                         </div>
 
                         <div
-                          className={`ml-3 bg-gradient-to-br ${item.accentColor} w-11 h-11 rounded-xl flex items-center justify-center shadow-lg`}
+                          className={`ml-3 bg-gradient-to-br ${item.accentColor} w-11 h-11 rounded-md flex items-center justify-center shadow-lg`}
                         >
                           <Icon className="w-5 h-5 text-white" />
                         </div>
                       </div>
 
                       {/* CTA */}
-                      <button className="bg-white/95 text-blue-900 px-5 py-2 rounded-full font-bold text-xs shadow-lg hover:scale-105 transition">
+                      <button className="bg-white/95 text-[var(--color-primary)] px-5 py-2 rounded-full font-bold text-xs shadow-lg hover:scale-105 transition">
                         Claim Now
                       </button>
                     </div>
@@ -191,7 +191,7 @@ export default function OfferCarousel() {
               onClick={() => setCurrentSlide(index)}
               className={`transition-all rounded-full ${
                 currentSlide === index
-                  ? "bg-blue-600 w-6 h-1.5"
+                  ? "bg-[var(--color-primary)] w-6 h-1.5"
                   : "bg-gray-300 w-1.5 h-1.5"
               }`}
             />

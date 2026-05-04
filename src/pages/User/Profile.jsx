@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Mail, Phone, MapPin, Wifi, User, LogOut } from "lucide-react";
+import {
+  FaEnvelope,
+  FaLocationDot,
+  FaPhone,
+  FaRightFromBracket,
+  FaUser,
+} from "react-icons/fa6";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -18,11 +24,6 @@ export default function Profile() {
           avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(parsedUser.name || "User")}&background=1e3a8a&color=fff&size=200`,
           joined: "Jan 2024", // Default since not in localStorage
           address: parsedUser.address || "Address not provided",
-          activePlan: {
-            name: "Standard Plan", // Default plan
-            speed: "50Mbps",
-            expiry: "30 Sep 2025",
-          },
         });
       } else {
         // Fallback user data if localStorage is empty
@@ -34,11 +35,6 @@ export default function Profile() {
             "https://ui-avatars.com/api/?name=Guest+User&background=1e3a8a&color=fff&size=200",
           joined: "Jan 2024",
           address: "Address not provided",
-          activePlan: {
-            name: "Standard Plan",
-            speed: "50Mbps",
-            expiry: "30 Sep 2025",
-          },
         });
       }
     } catch (error) {
@@ -52,11 +48,6 @@ export default function Profile() {
           "https://ui-avatars.com/api/?name=Guest+User&background=1e3a8a&color=fff&size=200",
         joined: "Jan 2024",
         address: "Address not provided",
-        activePlan: {
-          name: "Standard Plan",
-          speed: "50Mbps",
-          expiry: "30 Sep 2025",
-        },
       });
     } finally {
       setLoading(false);
@@ -75,10 +66,10 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="wifi-page flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
-          <p className="text-gray-600">Loading profile...</p>
+          <div className="inline-block w-8 h-8 border-4 border-[var(--color-primary-soft)] border-t-[var(--color-primary)] rounded-full animate-spin mb-3"></div>
+          <p className="text-[var(--color-text-muted)]">Loading profile...</p>
         </div>
       </div>
     );
@@ -86,19 +77,19 @@ export default function Profile() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="wifi-page flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Unable to load profile data</p>
+          <p className="text-[var(--color-text-muted)]">Unable to load profile data</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="wifi-page">
       {/* Header */}
-      <div className="bg-blue-900 px-6 py-4">
-        <h1 className="text-xl font-bold text-white">Profile</h1>
+      <div className="wifi-hero wifi-hero-primary px-6 py-5 rounded-b-[28px]">
+        <h1 className="wifi-page-title text-xl font-bold">Profile</h1>
       </div>
 
       <div className="max-w-md mx-auto px-4 py-6 pb-20">
@@ -108,93 +99,58 @@ export default function Profile() {
             <img
               src={user.avatar}
               alt={user.name}
-              className="w-28 h-28 rounded-full shadow-lg"
+              className="w-28 h-28 rounded-3xl shadow-lg"
             />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-1">{user.name}</h2>
-          <p className="text-gray-600 text-sm mb-1">{user.email}</p>
-          <p className="text-gray-500 text-xs">Member since {user.joined}</p>
-        </div>
-
-        {/* Active Plan Card */}
-        <div className="bg-blue-900 rounded-2xl p-6 mb-6 shadow-lg">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex-1">
-              <p className="text-blue-300 text-xs uppercase tracking-wide mb-2">
-                Active Plan
-              </p>
-              <h3 className="text-white text-xl font-bold mb-1">
-                {user.activePlan.name}
-              </h3>
-              <div className="flex items-center gap-2 text-blue-200">
-                <Wifi className="w-4 h-4" />
-                <span className="text-lg font-semibold">
-                  {user.activePlan.speed}
-                </span>
-              </div>
-            </div>
-            <div className="bg-blue-800 p-3 rounded-xl">
-              <Wifi className="w-6 h-6 text-white" />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between pt-4 border-t border-blue-800">
-            <div>
-              <p className="text-blue-300 text-xs mb-1">Valid till</p>
-              <p className="text-white font-medium text-sm">
-                {user.activePlan.expiry}
-              </p>
-            </div>
-            <button className="px-4 py-2 bg-white text-blue-900 text-sm font-semibold rounded-lg hover:bg-blue-50 transition-colors">
-              Renew / Upgrade
-            </button>
-          </div>
+          <h2 className="text-2xl font-bold text-[var(--color-text)] mb-1">{user.name}</h2>
+          <p className="text-[var(--color-text-muted)] text-sm mb-1">{user.email}</p>
+          <p className="text-[var(--color-text-muted)] text-xs">Member since {user.joined}</p>
         </div>
 
         {/* Personal Details */}
-        <div className="bg-gray-50 rounded-2xl p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">
+        <div className="wifi-card p-6">
+          <h3 className="text-lg font-bold text-[var(--color-text)] mb-4">
             Personal Details
           </h3>
 
           <div className="space-y-4">
             <div className="flex items-start gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <User className="w-5 h-5 text-blue-900" />
+              <div className="p-2 bg-[var(--color-primary-soft)] rounded-md">
+                <FaUser className="w-5 h-5 text-[var(--color-primary)]" />
               </div>
               <div className="flex-1">
-                <p className="text-xs text-gray-500 mb-1">Full Name</p>
-                <p className="text-gray-900 font-medium">{user.name}</p>
+                <p className="text-xs text-[var(--color-text-muted)] mb-1">Full Name</p>
+                <p className="text-[var(--color-text)] font-medium">{user.name}</p>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Mail className="w-5 h-5 text-blue-900" />
+              <div className="p-2 bg-[var(--color-primary-soft)] rounded-md">
+                <FaEnvelope className="w-5 h-5 text-[var(--color-primary)]" />
               </div>
               <div className="flex-1">
-                <p className="text-xs text-gray-500 mb-1">Email Address</p>
-                <p className="text-gray-900 font-medium">{user.email}</p>
+                <p className="text-xs text-[var(--color-text-muted)] mb-1">Email Address</p>
+                <p className="text-[var(--color-text)] font-medium">{user.email}</p>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Phone className="w-5 h-5 text-blue-900" />
+              <div className="p-2 bg-[var(--color-primary-soft)] rounded-md">
+                <FaPhone className="w-5 h-5 text-[var(--color-primary)]" />
               </div>
               <div className="flex-1">
-                <p className="text-xs text-gray-500 mb-1">Phone Number</p>
-                <p className="text-gray-900 font-medium">{user.phone}</p>
+                <p className="text-xs text-[var(--color-text-muted)] mb-1">Phone Number</p>
+                <p className="text-[var(--color-text)] font-medium">{user.phone}</p>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <MapPin className="w-5 h-5 text-blue-900" />
+              <div className="p-2 bg-[var(--color-primary-soft)] rounded-md">
+                <FaLocationDot className="w-5 h-5 text-[var(--color-primary)]" />
               </div>
               <div className="flex-1">
-                <p className="text-xs text-gray-500 mb-1">Address</p>
-                <p className="text-gray-900 font-medium">{user.address}</p>
+                <p className="text-xs text-[var(--color-text-muted)] mb-1">Address</p>
+                <p className="text-[var(--color-text)] font-medium">{user.address}</p>
               </div>
             </div>
           </div>
@@ -204,9 +160,9 @@ export default function Profile() {
         <div className="mt-6">
           <button
             onClick={handleLogout}
-            className="w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-xl hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+            className="wifi-btn-danger w-full"
           >
-            <LogOut className="w-5 h-5" />
+            <FaRightFromBracket className="w-5 h-5" />
             Logout
           </button>
         </div>

@@ -1,14 +1,21 @@
 import React, { useState } from "react";
-import { Settings, X, Package, User, HelpCircle, LogOut } from "lucide-react";
+import {
+  FaBoxOpen,
+  FaCircleQuestion,
+  FaGear,
+  FaRightFromBracket,
+  FaUser,
+  FaXmark,
+} from "react-icons/fa6";
 
 export default function SettingsSidebar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
-    { icon: Package, label: "My Plan", path: "/user/plan" },
-    { icon: User, label: "Edit Profile", path: "/user/edit-profile" },
-    { icon: HelpCircle, label: "Help", path: "/user/help" },
-    { icon: LogOut, label: "Logout", path: "/logout", danger: true },
+    { icon: FaBoxOpen, label: "My Plan", path: "/user/plan" },
+    { icon: FaUser, label: "Edit Profile", path: "/user/edit-profile" },
+    { icon: FaCircleQuestion, label: "Help", path: "/user/help" },
+    { icon: FaRightFromBracket, label: "Logout", path: "/logout", danger: true },
   ];
 
   const handleMenuClick = (path) => {
@@ -21,9 +28,9 @@ export default function SettingsSidebar() {
       {/* Settings button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="p-2 hover:bg-blue-800 rounded-lg transition-colors"
+        className="p-2 hover:bg-gray-100 rounded-md transition-colors"
       >
-        <Settings className="w-6 h-6 text-white" />
+        <FaGear className="w-6 h-6 text-[var(--color-text)]" />
       </button>
 
       {/* Sidebar */}
@@ -36,15 +43,15 @@ export default function SettingsSidebar() {
           />
 
           {/* Sidebar panel */}
-          <div className="fixed top-0 right-0 h-full w-3/4 sm:w-96 bg-blue-900/40 backdrop-blur-3xl shadow-2xl border-l border-white/30 z-50">
+          <div className="fixed top-0 right-0 h-full w-3/4 sm:w-96 bg-white shadow-2xl border-l border-[var(--color-border)] z-50">
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-white/20 bg-white/5">
-              <h2 className="text-2xl font-bold text-white bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-transparent">Settings</h2>
+            <div className="flex items-center justify-between p-6 border-b border-[var(--color-border)] bg-white">
+              <h2 className="text-2xl font-bold text-[var(--color-text)]">Settings</h2>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-white/20 rounded-xl transition-all backdrop-blur-sm"
+                className="p-2 hover:bg-gray-100 rounded-md transition-all"
               >
-                <X className="w-6 h-6 text-white" />
+                <FaXmark className="w-6 h-6 text-[var(--color-text)]" />
               </button>
             </div>
 
@@ -54,9 +61,9 @@ export default function SettingsSidebar() {
                 <button
                   key={index}
                   onClick={() => handleMenuClick(item.path)}
-                  className="w-full flex items-center gap-3 p-3 mb-1 transition-all hover:bg-white/20 text-white group"
+                  className="w-full flex items-center gap-3 p-3 mb-1 transition-all hover:bg-gray-50 text-[var(--color-text)] group"
                 >
-                  <div className="p-2 rounded-lg bg-white/20 group-hover:bg-white/30 transition-all">
+                  <div className="p-2 rounded-md bg-[var(--color-primary-soft)] group-hover:bg-gray-100 transition-all">
                     <item.icon className="w-5 h-5" />
                   </div>
                   <span className="text-base font-medium">{item.label}</span>
@@ -65,24 +72,24 @@ export default function SettingsSidebar() {
               
               {/* Horizontal divider */}
               <div className="py-2">
-                <div className="h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                <div className="h-px bg-[var(--color-border)]"></div>
               </div>
               
               {/* Logout button */}
               <button
                 onClick={() => handleMenuClick(menuItems[menuItems.length - 1].path)}
-                className="w-full flex items-center gap-3 p-3 transition-all hover:bg-red-500/30 text-red-200 hover:text-white group"
+                className="w-full flex items-center gap-3 p-3 transition-all hover:bg-red-50 text-red-600 group"
               >
-                <div className="p-2 rounded-lg bg-red-500/30 group-hover:bg-red-500/40 transition-all">
-                  <LogOut className="w-5 h-5" />
+                <div className="p-2 rounded-md bg-red-100 group-hover:bg-red-200 transition-all">
+                  <FaRightFromBracket className="w-5 h-5" />
                 </div>
                 <span className="text-base font-medium">Logout</span>
               </button>
             </div>
 
             {/* Footer */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-white/20 backdrop-blur-sm bg-white/5">
-              <p className="text-white/70 text-sm text-center font-medium">
+            <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-[var(--color-border)] bg-white">
+              <p className="text-[var(--color-text-muted)] text-sm text-center font-medium">
                 Version 1.0.0
               </p>
             </div>

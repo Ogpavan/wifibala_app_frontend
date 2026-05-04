@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Wifi, Zap, DollarSign, ChevronDown } from "lucide-react";
+import { FaBolt, FaChevronDown, FaIndianRupeeSign, FaWifi } from "react-icons/fa6";
 
 export default function PlansTable() {
   const [activeTab, setActiveTab] = useState("company");
@@ -195,7 +195,7 @@ export default function PlansTable() {
             </span>
           </td>
           <td className="px-3 py-3 flex items-center gap-1">
-            <Zap className="w-3.5 h-3.5 text-blue-500" />
+            <FaBolt className="w-3.5 h-3.5 text-blue-500" />
             <span className="font-bold">{plan.speed}</span> Mbps
           </td>
           <td className="px-3 py-3 font-bold text-blue-600">
@@ -208,7 +208,7 @@ export default function PlansTable() {
       return (
         <>
           <td className="px-3 py-3 flex items-center gap-1">
-            <Zap className="w-3.5 h-3.5 text-blue-500" />
+            <FaBolt className="w-3.5 h-3.5 text-blue-500" />
             <span className="font-bold">{plan.speed}</span> Mbps
           </td>
           <td className="px-3 py-3">
@@ -238,7 +238,7 @@ export default function PlansTable() {
             </span>
           </td>
           <td className="px-3 py-3 flex items-center gap-1">
-            <Zap className="w-3.5 h-3.5 text-blue-500" />
+            <FaBolt className="w-3.5 h-3.5 text-blue-500" />
             <span className="font-bold">{plan.speed}</span> Mbps
           </td>
           <td className="px-3 py-3 text-xs">{plan.validity}</td>
@@ -252,7 +252,7 @@ export default function PlansTable() {
       <div className="px-3 py-3 pb-20">
         <div className="flex items-center justify-center py-10">
           <div className="text-center">
-            <div className="inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-2"></div>
+            <div className="inline-block w-8 h-8 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin mb-2"></div>
             <p className="text-gray-600 text-sm">Loading plans...</p>
           </div>
         </div>
@@ -275,14 +275,14 @@ export default function PlansTable() {
             setActiveTab("company");
             setSelectedFilter("all");
           }}
-          className={`flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs transition-all ${
+          className={`flex-1 py-2.5 px-3 rounded-md font-semibold text-xs transition-all ${
             activeTab === "company"
-              ? "bg-blue-600 text-white shadow-md"
+              ? "bg-[var(--color-primary)] text-white shadow-md"
               : "bg-white text-gray-600 border border-gray-200"
           }`}
         >
           <div className="flex items-center justify-center gap-1.5">
-            <Wifi className="w-3.5 h-3.5" />
+            <FaWifi className="w-3.5 h-3.5" />
             Company
           </div>
         </button>
@@ -292,14 +292,14 @@ export default function PlansTable() {
             setActiveTab("speed");
             setSelectedFilter("all");
           }}
-          className={`flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs transition-all ${
+          className={`flex-1 py-2.5 px-3 rounded-md font-semibold text-xs transition-all ${
             activeTab === "speed"
-              ? "bg-blue-600 text-white shadow-md"
+              ? "bg-[var(--color-primary)] text-white shadow-md"
               : "bg-white text-gray-600 border border-gray-200"
           }`}
         >
           <div className="flex items-center justify-center gap-1.5">
-            <Zap className="w-3.5 h-3.5" />
+            <FaBolt className="w-3.5 h-3.5" />
             Speed
           </div>
         </button>
@@ -309,14 +309,14 @@ export default function PlansTable() {
             setActiveTab("price");
             setSelectedFilter("all");
           }}
-          className={`flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs transition-all ${
+          className={`flex-1 py-2.5 px-3 rounded-md font-semibold text-xs transition-all ${
             activeTab === "price"
-              ? "bg-blue-600 text-white shadow-md"
+              ? "bg-[var(--color-primary)] text-white shadow-md"
               : "bg-white text-gray-600 border border-gray-200"
           }`}
         >
           <div className="flex items-center justify-center gap-1.5">
-            <DollarSign className="w-3.5 h-3.5" />
+            <FaIndianRupeeSign className="w-3.5 h-3.5" />
             Price
           </div>
         </button>
@@ -327,12 +327,12 @@ export default function PlansTable() {
         <div className="relative">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 flex items-center justify-between hover:border-blue-300 transition-all text-sm"
+            className="w-full bg-white border border-gray-200 rounded-md px-3 py-2.5 flex items-center justify-between hover:border-[var(--color-primary)] transition-all text-sm"
           >
             <span className="text-gray-700 font-medium capitalize text-sm">
               {selectedFilter === "all" ? "All Plans" : selectedFilter}
             </span>
-            <ChevronDown
+            <FaChevronDown
               className={`w-4 h-4 text-gray-400 transition-transform ${
                 isDropdownOpen ? "rotate-180" : ""
               }`}
@@ -340,7 +340,7 @@ export default function PlansTable() {
           </button>
 
           {isDropdownOpen && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-20 overflow-hidden">
               {filters.map((filter, index) => (
                 <button
                   key={filter}
@@ -348,9 +348,9 @@ export default function PlansTable() {
                     setSelectedFilter(filter.toLowerCase());
                     setIsDropdownOpen(false);
                   }}
-                  className={`w-full px-3 py-2 text-left text-sm hover:bg-blue-50 transition-all ${
+                  className={`w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-primary-soft)] transition-all ${
                     selectedFilter === filter.toLowerCase()
-                      ? "bg-blue-50 text-blue-600 font-semibold"
+                      ? "bg-[var(--color-primary-soft)] text-[var(--color-primary)] font-semibold"
                       : "text-gray-700"
                   } ${index !== filters.length - 1 ? "border-b border-gray-100" : ""}`}
                 >
@@ -363,7 +363,7 @@ export default function PlansTable() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-md shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -380,7 +380,7 @@ export default function PlansTable() {
                     <td className="px-3 py-3 text-right">
                       <button
                         onClick={() => handleSelectPlan(plan.id)}
-                        className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors"
+                        className="bg-[var(--color-primary)] text-white px-4 py-1.5 rounded-md text-xs font-semibold hover:opacity-90 transition-colors"
                       >
                         Select
                       </button>

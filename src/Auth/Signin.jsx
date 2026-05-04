@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Wifi, Phone, Lock, Eye, EyeOff } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Phone, Lock, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { fetchAppSettings, getTelHref, getWhatsAppHref } from "../utils/settings";
 
 export default function WiFiSignIn() {
   const [form, setForm] = useState({
@@ -10,7 +11,40 @@ export default function WiFiSignIn() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [logoUrl, setLogoUrl] = useState("");
+  const [appSettings, setAppSettings] = useState({});
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+
+    const loadLogo = async () => {
+      try {
+        const cached = JSON.parse(localStorage.getItem("app_settings") || "null");
+        if (cached) {
+          setAppSettings(cached);
+        }
+        if (cached?.logo_url) {
+          setLogoUrl(`${baseUrl}${cached.logo_url}`);
+        }
+      } catch {
+        // Ignore cache parsing issues and fetch fresh settings.
+      }
+
+      try {
+        const settings = await fetchAppSettings(baseUrl);
+        localStorage.setItem("app_settings", JSON.stringify(settings));
+        setAppSettings(settings);
+        if (settings?.logo_url) {
+          setLogoUrl(`${baseUrl}${settings.logo_url}`);
+        }
+      } catch {
+        setLogoUrl("");
+      }
+    };
+
+    loadLogo();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -72,28 +106,44 @@ export default function WiFiSignIn() {
     }
   };
 
+  const supportPhone = appSettings.primary_number || "";
+  const supportWhatsapp =
+    appSettings.whatsapp_number || appSettings.primary_number || "";
+  const supportPhoneHref = getTelHref(supportPhone);
+  const supportWhatsappHref = getWhatsAppHref(supportWhatsapp);
+
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div className="wifi-page flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <div className="p-4 bg-blue-900 rounded-full">
-            <Wifi className="w-8 h-8 text-white" />
-          </div>
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt="WifiWala"
+              className="h-16 w-auto object-contain"
+            />
+          ) : (
+            <img
+              src="/main.png"
+              alt="WifiWala"
+              className="h-16 w-auto object-contain"
+            />
+          )}
         </div>
 
         {/* Header */}
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-blue-900 mb-1">
+          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-1">
             Welcome Back
           </h1>
-          <p className="text-sm text-gray-600">Sign in to your account</p>
+          <p className="text-sm text-[var(--color-text-muted)]">Sign in to your account</p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-200">
+        <div className="wifi-card p-6">
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
               <p className="text-red-600 text-xs font-medium">{error}</p>
             </div>
           )}
@@ -101,7 +151,7 @@ export default function WiFiSignIn() {
           <div className="space-y-4">
             {/* Mobile Number */}
             <div>
-              <label className="block text-xs font-semibold text-blue-900 mb-1">
+              <label className="block text-xs font-semibold text-[var(--color-text)] mb-1">
                 Mobile Number
               </label>
               <div className="relative">
@@ -113,14 +163,14 @@ export default function WiFiSignIn() {
                   onChange={handleChange}
                   placeholder="Enter 10-digit number"
                   maxLength="10"
-                  className="w-full pl-10 pr-3 py-2.5 bg-white border border-gray-300 rounded-lg focus:border-blue-900 focus:outline-none transition-all text-sm"
+                  className="wifi-input pl-10 pr-3 py-2.5"
                 />
               </div>
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-xs font-semibold text-blue-900 mb-1">
+              <label className="block text-xs font-semibold text-[var(--color-text)] mb-1">
                 Password
               </label>
               <div className="relative">
@@ -131,11 +181,11 @@ export default function WiFiSignIn() {
                   value={form.password}
                   onChange={handleChange}
                   placeholder="Enter your password"
-                  className="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-300 rounded-lg focus:border-blue-900 focus:outline-none transition-all text-sm"
+                  className="wifi-input pl-10 pr-10 py-2.5"
                 />
                 <button
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-900"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[var(--color-primary)]"
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4" />
@@ -146,18 +196,11 @@ export default function WiFiSignIn() {
               </div>
             </div>
 
-            {/* Forgot Password */}
-            <div className="text-right">
-              <button className="text-xs text-blue-900 hover:text-blue-700 font-medium">
-                Forgot Password?
-              </button>
-            </div>
-
             {/* Sign In Button */}
             <button
               onClick={handleSignIn}
               disabled={loading}
-              className="w-full py-3 bg-blue-900 text-white font-semibold rounded-lg hover:bg-blue-800 transition-all disabled:opacity-50 mt-4"
+              className="wifi-btn-primary w-full mt-4 disabled:opacity-50"
             >
               {loading ? (
                 <div className="flex items-center justify-center">
@@ -172,10 +215,10 @@ export default function WiFiSignIn() {
 
           {/* Footer */}
           <div className="mt-6 text-center">
-            <p className="text-gray-600 text-xs">
+            <p className="text-[var(--color-text-muted)] text-xs">
               Don't have an account?{" "}
               <span
-                className="text-blue-900 hover:text-blue-700 font-semibold cursor-pointer"
+                className="text-[var(--color-primary)] hover:text-[var(--color-primary-strong)] font-semibold cursor-pointer"
                 onClick={() => navigate("/signup")}
               >
                 Sign Up
@@ -185,11 +228,45 @@ export default function WiFiSignIn() {
         </div>
 
         {/* Terms */}
-        <p className="text-center text-xs text-gray-500 mt-4 px-2">
+        <p className="text-center text-xs text-[var(--color-text-muted)] mt-4 px-2">
           By continuing, you agree to our{" "}
-          <span className="text-blue-900 cursor-pointer">Terms</span> and{" "}
-          <span className="text-blue-900 cursor-pointer">Privacy Policy</span>
+          <span
+            className="text-[var(--color-primary)] cursor-pointer"
+            onClick={() => navigate("/terms")}
+          >
+            Terms
+          </span>{" "}
+          and{" "}
+          <span
+            className="text-[var(--color-primary)] cursor-pointer"
+            onClick={() => navigate("/privacy-policy")}
+          >
+            Privacy Policy
+          </span>
         </p>
+
+        {(supportPhone || supportWhatsapp) && (
+          <div className="mt-4 text-center space-y-1">
+            {supportPhone && (
+              <a
+                href={supportPhoneHref || undefined}
+                className="block text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)]"
+              >
+                Contact: {supportPhone}
+              </a>
+            )}
+            {supportWhatsapp && (
+              <a
+                href={supportWhatsappHref || undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-xs text-[var(--color-text-muted)] hover:text-[var(--color-primary)]"
+              >
+                WhatsApp: {supportWhatsapp}
+              </a>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

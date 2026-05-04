@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Crown, Star, Zap, CheckCircle, Wifi } from "lucide-react";
+import { FaBolt, FaCircleCheck, FaCrown, FaStar, FaWifi } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 export default function VipPlans() {
@@ -81,19 +81,6 @@ export default function VipPlans() {
     return features;
   };
 
-  // Determine color gradient based on index
-  const getColorGradient = (index) => {
-    const colors = [
-      "from-slate-600 to-slate-700",
-      "from-blue-600 to-indigo-600",
-      "from-purple-600 to-pink-600",
-      "from-amber-500 to-orange-600",
-      "from-green-600 to-emerald-600",
-      "from-red-600 to-rose-600",
-    ];
-    return colors[index % colors.length];
-  };
-
   // Determine if plan should be marked as popular (e.g., second plan)
   const isPopular = (index) => {
     return index === 1; // Mark second plan as popular
@@ -101,10 +88,10 @@ export default function VipPlans() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="wifi-page flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900 mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading VIP plans...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-primary)] mx-auto mb-4"></div>
+          <p className="text-[var(--color-text-muted)]">Loading VIP plans...</p>
         </div>
       </div>
     );
@@ -112,15 +99,15 @@ export default function VipPlans() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto px-4">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-            <p className="text-red-600 font-semibold">Error loading plans</p>
-            <p className="text-red-500 text-sm mt-1">{error}</p>
+      <div className="wifi-page flex items-center justify-center">
+          <div className="text-center max-w-md mx-auto px-4">
+          <div className="bg-[color-mix(in_srgb,var(--color-error)_10%,white)] border border-[color-mix(in_srgb,var(--color-error)_20%,white)] rounded-md p-4 mb-4">
+            <p className="text-[var(--color-error)] font-semibold">Error loading plans</p>
+            <p className="text-[var(--color-error)] text-sm mt-1">{error}</p>
           </div>
           <button
             onClick={fetchVipPlans}
-            className="bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-semibold"
+            className="wifi-btn-primary px-4 py-2"
           >
             Try Again
           </button>
@@ -130,17 +117,17 @@ export default function VipPlans() {
   }
 
   return (
-    <div className="min-h-screen bg-white pb-4">
+    <div className="wifi-page pb-4">
       {/* Header */}
-      <div className="bg-blue-900 shadow-lg">
+      <div className="wifi-hero wifi-hero-primary rounded-b-[28px]">
         <div className="max-w-md mx-auto px-3 py-3">
           <div className="flex items-center gap-2">
-            <div className="bg-yellow-400 p-1.5 rounded-lg shadow-lg">
-              <Crown className="w-3.5 h-3.5 text-blue-900" />
+            <div className="bg-white/20 p-1.5 rounded-md shadow-lg border border-white/20">
+              <FaCrown className="w-3.5 h-3.5 text-white" />
             </div>
             <div>
-              <h1 className="text-base font-bold text-white">VIP Membership</h1>
-              <p className="text-blue-100 text-[10px]">
+              <h1 className="wifi-page-title text-base font-bold">VIP Membership</h1>
+              <p className="wifi-hero-subtitle text-[10px]">
                 Exclusive benefits & features
               </p>
             </div>
@@ -152,17 +139,17 @@ export default function VipPlans() {
         {/* VIP Plans Section */}
         <div>
           <div className="mb-2">
-            <h2 className="text-base font-bold text-slate-800">
+            <h2 className="text-base font-bold text-[var(--color-text)]">
               Choose Your Plan
             </h2>
-            <p className="text-slate-600 text-[10px]">
+            <p className="text-[var(--color-text-muted)] text-[10px]">
               Select the perfect plan
             </p>
           </div>
 
           {vipPlans.length === 0 ? (
             <div className="text-center py-6">
-              <p className="text-slate-500 text-sm">
+              <p className="text-[var(--color-text-muted)] text-sm">
                 No VIP plans available at the moment
               </p>
             </div>
@@ -175,13 +162,13 @@ export default function VipPlans() {
                 return (
                   <div
                     key={plan.id}
-                    className={`bg-white rounded-xl shadow-md overflow-hidden border relative ${
-                      popular ? "border-yellow-400" : "border-slate-200"
+                    className={`wifi-card overflow-hidden relative ${
+                      popular ? "border-[var(--color-primary)]" : "border-[var(--color-border)]"
                     }`}
                   >
                     {popular && (
-                      <div className="absolute top-1.5 right-1.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold z-10 shadow-md flex items-center gap-0.5">
-                        <Star className="w-2 h-2 fill-white" />
+                      <div className="absolute top-1.5 right-1.5 bg-[var(--color-primary)] text-white px-2 py-0.5 rounded-full text-[10px] font-bold z-10 shadow-md flex items-center gap-0.5">
+                        <FaStar className="w-2 h-2" />
                         POPULAR
                       </div>
                     )}
@@ -221,9 +208,9 @@ export default function VipPlans() {
 
                       {/* Speed Badge */}
                       {plan.speed_mbps && (
-                        <div className="absolute top-1.5 left-1.5 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded-lg shadow-md">
-                          <p className="text-blue-600 font-bold text-[10px] flex items-center gap-0.5">
-                            <Zap className="w-2.5 h-2.5 fill-blue-600" />
+                        <div className="absolute top-1.5 left-1.5 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded-full shadow-md">
+                          <p className="text-[var(--color-primary)] font-bold text-[10px] flex items-center gap-0.5">
+                            <FaBolt className="w-2.5 h-2.5" />
                             {plan.speed_mbps} Mbps
                           </p>
                         </div>
@@ -243,13 +230,13 @@ export default function VipPlans() {
                     </div>
 
                     {/* Content Section */}
-                    <div className="p-2.5">
+                    <div className="p-3">
                       {/* Validity Info */}
                       <div className="flex items-end gap-1 mb-2">
-                        <span className="text-xl font-bold text-slate-800">
+                        <span className="text-xl font-bold text-[var(--color-text)]">
                           {plan.validity_days} Days
                         </span>
-                        <span className="text-slate-500 text-[10px] mb-0.5">
+                        <span className="text-[var(--color-text-muted)] text-[10px] mb-0.5">
                           validity
                         </span>
                       </div>
@@ -262,10 +249,10 @@ export default function VipPlans() {
                               key={idx}
                               className="flex items-center gap-1.5"
                             >
-                              <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-md p-0.5 flex-shrink-0">
-                                <CheckCircle className="w-2.5 h-2.5 text-white" />
+                              <div className="bg-[var(--color-primary)] rounded-md p-0.5 flex-shrink-0">
+                                <FaCircleCheck className="w-2.5 h-2.5 text-white" />
                               </div>
-                              <span className="text-slate-700 text-[11px]">
+                              <span className="text-[var(--color-text)] text-[11px]">
                                 {feature}
                               </span>
                             </div>
@@ -276,7 +263,7 @@ export default function VipPlans() {
                       {/* Button */}
                       <button
                         onClick={() => handleViewMore(plan.id)}
-                        className="w-full py-1.5 px-3 rounded-lg font-semibold text-[11px] transition-all duration-200 bg-blue-900 text-white hover:bg-blue-800 active:bg-blue-950"
+                        className="w-full py-1.5 px-3 rounded-lg font-semibold text-[11px] transition-all duration-200 bg-[var(--color-primary)] text-white hover:opacity-90"
                       >
                         View More
                       </button>
@@ -289,9 +276,9 @@ export default function VipPlans() {
         </div>
 
         {/* Footer Info */}
-        <div className="bg-blue-50 rounded-lg p-2 border border-blue-100">
-          <p className="text-slate-600 text-[10px] text-center">
-            <Wifi className="w-2.5 h-2.5 inline-block mr-1 text-blue-600" />
+      <div className="bg-[var(--color-primary-soft)] rounded-md p-2 border border-[var(--color-border)]">
+          <p className="text-[var(--color-text-muted)] text-[10px] text-center">
+            <FaWifi className="w-2.5 h-2.5 inline-block mr-1 text-[var(--color-primary)]" />
             Need help? Contact support
           </p>
         </div>

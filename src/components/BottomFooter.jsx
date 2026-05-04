@@ -7,12 +7,13 @@ import {
   faTags,
   faListAlt,
   faTriangleExclamation, // Complaints icon
+  faCrown,
 } from "@fortawesome/free-solid-svg-icons";
 
 const navItems = [
   { label: "Home", icon: faHouse, path: "/" },
   { label: "Plans", icon: faListAlt, path: "/user/plans" },
-  { label: "wifi", icon: faWifi, path: "/user/speedtest", center: true },
+  { label: "VIP Offer", icon: faCrown, path: "/user/speedtest", center: true },
   { label: "Offers", icon: faTags, path: "/user/offers" },
   { label: "Services", icon: faTriangleExclamation, path: "/user/complaints" },
 ];
@@ -37,11 +38,9 @@ export default function BottomFooter() {
   return (
     <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg">
       <div
-        className="relative flex justify-between items-end bg-white rounded-3xl shadow-lg py-2"
+        className="wifi-card relative flex justify-between items-end py-2.5 px-1"
         style={{
           minHeight: 70,
-          background: "var(--color-bg-footer)",
-          boxShadow: "var(--color-shadow-footer)",
         }}
       >
         {/* Home */}
@@ -50,7 +49,7 @@ export default function BottomFooter() {
           className="flex flex-col items-center flex-1 py-2 transition-all duration-200"
           style={{
             color:
-              currentIndex === 0 ? "var(--color-purple)" : "var(--color-gray)",
+              currentIndex === 0 ? "var(--color-primary)" : "var(--color-text-muted)",
             fontWeight: currentIndex === 0 ? 600 : 400,
           }}
         >
@@ -68,7 +67,7 @@ export default function BottomFooter() {
           className="flex flex-col items-center flex-1 py-2 transition-all duration-200 mr-6"
           style={{
             color:
-              currentIndex === 1 ? "var(--color-purple)" : "var(--color-gray)",
+              currentIndex === 1 ? "var(--color-primary)" : "var(--color-text-muted)",
             fontWeight: currentIndex === 1 ? 600 : 400,
           }}
         >
@@ -88,8 +87,8 @@ export default function BottomFooter() {
           }`}
           style={{
             background:
-              "linear-gradient(135deg, var(--color-purple), var(--color-indigo))",
-            boxShadow: "var(--color-shadow-center)",
+              "linear-gradient(135deg, var(--color-primary), var(--color-accent))",
+            boxShadow: "0 16px 30px rgba(15, 61, 145, 0.24)",
           }}
         >
           <FontAwesomeIcon
@@ -105,7 +104,7 @@ export default function BottomFooter() {
           className="flex flex-col items-center flex-1 py-2 transition-all duration-200 ml-6"
           style={{
             color:
-              currentIndex === 3 ? "var(--color-purple)" : "var(--color-gray)",
+              currentIndex === 3 ? "var(--color-primary)" : "var(--color-text-muted)",
             fontWeight: currentIndex === 3 ? 600 : 400,
           }}
         >
@@ -123,7 +122,7 @@ export default function BottomFooter() {
           className="flex flex-col items-center flex-1 py-2 transition-all duration-200"
           style={{
             color:
-              currentIndex === 4 ? "var(--color-purple)" : "var(--color-gray)",
+              currentIndex === 4 ? "var(--color-primary)" : "var(--color-text-muted)",
             fontWeight: currentIndex === 4 ? 600 : 400,
           }}
         >
