@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "wifibala",
+    "slug": "wifibala-native",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./public/wifibal.png",
+    "scheme": "wifibala",
+    "platforms": [
+      "android",
+      "ios"
+    ],
+    "android": {
+      "package": "com.wifibala.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./public/wifibal.png",
+        "backgroundColor": "#0f3d91"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.wifibala.app",
+      "supportsTablet": true
+    },
+    "extra": {
+      "appUrl": "https://app.wifibala.com"
+    }
+  }
+}

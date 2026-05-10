@@ -1,0 +1,12 @@
+node_modules/
+.expo/
+.expo-shared/
+dist/
+web-build/
+coverage/
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+.DS_Store
+android/
+ios/

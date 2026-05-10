@@ -3,7 +3,12 @@ import { FaBell } from "react-icons/fa6";
 
 function Navbar() {
   return (
-    <div className="wifi-card mx-3 mt-3 px-4 py-3 flex items-center justify-between">
+    <div
+      className="wifi-card mx-3 mt-3 px-4 py-3 flex items-center justify-between"
+      style={{
+        paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.75rem)",
+      }}
+    >
       
       {/* Left: Logo */}
       <div className="flex items-center gap-3">

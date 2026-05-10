@@ -40,7 +40,8 @@ export default function BottomFooter() {
       <div
         className="wifi-card relative flex justify-between items-end py-2.5 px-1"
         style={{
-          minHeight: 70,
+          minHeight: "calc(70px + env(safe-area-inset-bottom, 0px))",
+          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.625rem)",
         }}
       >
         {/* Home */}

@@ -23,7 +23,15 @@ export default function Offers() {
       }
 
       const data = await response.json();
-      setOffers(data.data || []);
+      const rawOffers = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.data)
+          ? data.data
+          : Array.isArray(data?.offers)
+            ? data.offers
+            : [];
+
+      setOffers(rawOffers.map(normalizeOffer).filter((offer) => offer.offer_id || offer.offer_name));
       setError(null);
     } catch (err) {
       console.error("Error fetching offers:", err);
@@ -33,9 +41,27 @@ export default function Offers() {
     }
   };
 
+  const normalizeOffer = (offer) => {
+    if (!offer || typeof offer !== "object") return {};
+
+    return {
+      ...offer,
+      offer_description: offer.offer_description || offer.description || "",
+      data_limit: offer.data_limit || offer.data_policy || "Unlimited",
+      speed: offer.speed || (offer.speed_mbps ? `${offer.speed_mbps} Mbps` : ""),
+      final_price: offer.final_price ?? offer.price ?? offer.original_price ?? 0,
+      original_price: offer.original_price ?? offer.price ?? offer.final_price ?? 0,
+      savings: Number(offer.savings ?? 0),
+      discount_percentage: Number(offer.discount_percentage ?? offer.discount_value ?? 0),
+    };
+  };
+
   const formatDiscount = (offer) => {
     if (offer.discount_type === "percentage") {
       return `${offer.discount_value}% OFF${offer.max_discount ? ` (Max ₹${offer.max_discount})` : ""}`;
+    }
+    if (offer.discount_type === "free_months") {
+      return `${offer.discount_value} Month${Number(offer.discount_value) > 1 ? "s" : ""} Free`;
     }
     return `₹${offer.discount_value} OFF`;
   };
@@ -49,11 +75,11 @@ export default function Offers() {
 
   const generateOfferCode = (offer) => {
     // Generate a code based on offer name or use a pattern
-    const words = offer.offer_name.toUpperCase().split(" ");
+    const words = (offer.offer_name || "OFFER").toUpperCase().split(" ");
     if (words.length >= 2) {
       return words[0].substring(0, 4) + words[1].substring(0, 2);
     }
-    return offer.offer_name.substring(0, 6).toUpperCase();
+    return (offer.offer_name || "OFFER").substring(0, 6).toUpperCase();
   };
 
   const getOfferColor = (index) => {
@@ -70,16 +96,6 @@ export default function Offers() {
 
   const handleUseOffer = (offer) => {
     // Navigate to plan details with offer information
-    const offerParams = new URLSearchParams({
-      offer_id: offer.offer_id,
-      offer_name: offer.offer_name,
-      discount_type: offer.discount_type,
-      discount_value: offer.discount_value,
-      max_discount: offer.max_discount || "",
-      final_price: offer.final_price,
-      savings: offer.savings,
-    }).toString();
-
     navigate(
       `/user/plans/${offer.plan_id}?offer=${encodeURIComponent(
         btoa(
@@ -149,7 +165,7 @@ export default function Offers() {
         </div>
       </div>
 
-      <div className="max-w-md mx-auto px-4 -mt-4">
+      <div className="max-w-md mx-auto px-4 pt-4">
 
         {offers.length === 0 ? (
           <div className="wifi-card text-center py-12 px-4">
@@ -171,7 +187,7 @@ export default function Offers() {
 
               return (
                 <div
-                  key={offer.offer_id}
+                  key={offer.offer_id || `${offer.offer_name}-${index}`}
                   className={`${colorClass} rounded-md p-4 text-[var(--color-text)] shadow-sm`}
                 >
                   <div className="flex justify-between items-start mb-2">
@@ -192,7 +208,7 @@ export default function Offers() {
                   <div className="mb-3">
                     <div className="flex items-center justify-between mb-1">
                       <p className="text-xs text-[var(--color-text-muted)]">
-                        Plan: {offer.speed} • {offer.data_limit}
+                        Plan: {offer.speed || "Selected Plan"} • {offer.data_limit || "Unlimited"}
                       </p>
                       <div className="text-right">
                         {offer.savings > 0 && (

@@ -9,7 +9,7 @@ import {
   FaTv,
   FaWifi,
 } from "react-icons/fa6";
-import { resolveOttLogo } from "../../utils/ott";
+import { resolveMediaUrl, resolveOttLogo } from "../../utils/ott";
 
 const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`;
 
@@ -65,6 +65,14 @@ export default function VipDetails() {
     }
   };
 
+  const getOttName = (ott) => {
+    if (typeof ott === "string") return ott;
+    if (ott && typeof ott === "object") {
+      return ott.ott_name || ott.name || ott.title || "";
+    }
+    return "";
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center">
@@ -94,6 +102,7 @@ export default function VipDetails() {
 
   const ottPlatforms = parseJsonField(planData.ott_platforms);
   const additionalBenefits = parseJsonField(planData.additional_benefits);
+  const planImageUrl = resolveMediaUrl(planData.image_url);
 
   const features = [
     {
@@ -107,8 +116,12 @@ export default function VipDetails() {
     {
       title: "OTT Subscriptions",
       description:
-        ottPlatforms.length > 0
-          ? `Free access to ${ottPlatforms.slice(0, 2).join(", ")} and more premium platforms.`
+        ottPlatforms.map(getOttName).filter(Boolean).length > 0
+          ? `Free access to ${ottPlatforms
+              .map(getOttName)
+              .filter(Boolean)
+              .slice(0, 2)
+              .join(", ")} and more premium platforms.`
           : "OTT subscriptions included with this plan.",
     },
     {
@@ -162,10 +175,10 @@ export default function VipDetails() {
           </div>
         </div>
 
-        {planData.image_url && (
+        {planImageUrl && (
           <div className="mb-5 rounded-md overflow-hidden">
             <img
-              src={`${import.meta.env.VITE_API_BASE_URL}/${planData.image_url}`}
+              src={planImageUrl}
               alt={planData.plan_name}
               className="w-full h-48 object-cover"
               onError={(e) => {
@@ -248,7 +261,7 @@ export default function VipDetails() {
                     </div>
                   )}
                   <span className="text-xs font-medium text-[var(--color-text)]">
-                    {ott.ott_name || ott}
+                    {getOttName(ott) || "OTT"}
                   </span>
                 </div>
               ))}

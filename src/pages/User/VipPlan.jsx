@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaBolt, FaCircleCheck, FaCrown, FaStar, FaWifi } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { resolveMediaUrl } from "../../utils/ott";
 
 export default function VipPlans() {
   const navigate = useNavigate();
@@ -52,6 +53,14 @@ export default function VipPlans() {
     return [];
   };
 
+  const getOttName = (ott) => {
+    if (typeof ott === "string") return ott;
+    if (ott && typeof ott === "object") {
+      return ott.ott_name || ott.name || ott.title || "";
+    }
+    return "";
+  };
+
   // Helper to build features array from backend data
   const buildFeatures = (plan) => {
     const features = [];
@@ -70,7 +79,10 @@ export default function VipPlans() {
 
     const ottPlatforms = parseJsonField(plan.ott_platforms);
     if (ottPlatforms.length > 0) {
-      features.push(`OTT: ${ottPlatforms.join(", ")}`);
+      const ottNames = ottPlatforms.map(getOttName).filter(Boolean);
+      if (ottNames.length > 0) {
+        features.push(`OTT: ${ottNames.join(", ")}`);
+      }
     }
 
     const additionalBenefits = parseJsonField(plan.additional_benefits);
@@ -158,6 +170,7 @@ export default function VipPlans() {
               {vipPlans.map((plan, index) => {
                 const features = buildFeatures(plan);
                 const popular = isPopular(index);
+                const imageUrl = resolveMediaUrl(plan.image_url);
 
                 return (
                   <div
@@ -175,9 +188,9 @@ export default function VipPlans() {
 
                     {/* Image Section */}
                     <div className="relative h-36 overflow-hidden">
-                      {plan.image_url ? (
+                      {imageUrl ? (
                         <img
-                          src={`${import.meta.env.VITE_API_BASE_URL}/${plan.image_url}`}
+                          src={imageUrl}
                           alt={plan.plan_name}
                           className="w-full h-full object-cover"
                           onError={(e) => {
