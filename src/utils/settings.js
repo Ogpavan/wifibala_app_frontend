@@ -1,4 +1,4 @@
-const DEFAULT_SETTINGS = {
+export const DEFAULT_SETTINGS = {
   primary_number: "",
   secondary_number: "",
   whatsapp_number: "",
@@ -33,6 +33,27 @@ export function getWhatsAppHref(value) {
   const digits = phone.replace(/\D/g, "");
   if (!digits) return "";
   return `https://wa.me/${digits}`;
+}
+
+export function readCachedAppSettings() {
+  if (typeof window === "undefined") return { ...DEFAULT_SETTINGS };
+
+  try {
+    const cached = window.localStorage.getItem("app_settings");
+    if (!cached) return { ...DEFAULT_SETTINGS };
+    return normalizeSettingRow(JSON.parse(cached));
+  } catch {
+    return { ...DEFAULT_SETTINGS };
+  }
+}
+
+export function cacheAppSettings(settings) {
+  if (typeof window === "undefined") return normalizeSettingRow(settings);
+
+  const normalized = normalizeSettingRow(settings);
+  window.localStorage.setItem("app_settings", JSON.stringify(normalized));
+  window.localStorage.setItem("app_theme_color", normalized.theme_color);
+  return normalized;
 }
 
 export async function fetchAppSettings(baseUrl) {

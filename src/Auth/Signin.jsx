@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Phone, Lock, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { fetchAppSettings, getTelHref, getWhatsAppHref } from "../utils/settings";
+import {
+  cacheAppSettings,
+  fetchAppSettings,
+  getTelHref,
+  getWhatsAppHref,
+  readCachedAppSettings,
+} from "../utils/settings";
 
 export default function WiFiSignIn() {
   const [form, setForm] = useState({
@@ -19,23 +25,20 @@ export default function WiFiSignIn() {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
 
     const loadLogo = async () => {
-      try {
-        const cached = JSON.parse(localStorage.getItem("app_settings") || "null");
-        if (cached) {
-          setAppSettings(cached);
-        }
-        if (cached?.logo_url) {
+      const cached = readCachedAppSettings();
+      setAppSettings(cached);
+      if (cached?.logo_url) {
+        try {
           setLogoUrl(`${baseUrl}${cached.logo_url}`);
+        } catch {
+          // Ignore malformed cached URL values and fetch fresh settings.
         }
-      } catch {
-        // Ignore cache parsing issues and fetch fresh settings.
       }
 
       try {
-        const settings = await fetchAppSettings(baseUrl);
-        localStorage.setItem("app_settings", JSON.stringify(settings));
+        const settings = cacheAppSettings(await fetchAppSettings(baseUrl));
         setAppSettings(settings);
-        if (settings?.logo_url) {
+        if (settings.logo_url) {
           setLogoUrl(`${baseUrl}${settings.logo_url}`);
         }
       } catch {
@@ -120,13 +123,13 @@ export default function WiFiSignIn() {
           {logoUrl ? (
             <img
               src={logoUrl}
-              alt="WifiWala"
+              alt="wifibala"
               className="h-16 w-auto object-contain"
             />
           ) : (
             <img
               src="/main.png"
-              alt="WifiWala"
+              alt="wifibala"
               className="h-16 w-auto object-contain"
             />
           )}

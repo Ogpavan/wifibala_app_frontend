@@ -4,7 +4,79 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>wifiwala</title>
+    <title>wifibala</title>
+    <script>
+      (() => {
+        const presetColors = {
+          blue: "#4169e1",
+          green: "#10b981",
+          orange: "#f97316",
+          rose: "#f43f5e",
+          slate: "#64748b",
+        };
+
+        const normalizeHexColor = (value) => {
+          if (typeof value !== "string") return null;
+          const match = /^#?([0-9a-fA-F]{6})$/.exec(value.trim());
+          return match ? `#${match[1].toLowerCase()}` : null;
+        };
+
+        const hexToRgb = (hex) => {
+          const normalized = normalizeHexColor(hex);
+          if (!normalized) return null;
+          const value = normalized.slice(1);
+          return {
+            r: Number.parseInt(value.slice(0, 2), 16),
+            g: Number.parseInt(value.slice(2, 4), 16),
+            b: Number.parseInt(value.slice(4, 6), 16),
+          };
+        };
+
+        const mixColors = (hexA, hexB, amount) => {
+          const colorA = hexToRgb(hexA);
+          const colorB = hexToRgb(hexB);
+          if (!colorA || !colorB) return normalizeHexColor(hexA) || presetColors.blue;
+
+          const weight = Math.max(0, Math.min(1, amount));
+          const mixed = {
+            r: colorA.r + (colorB.r - colorA.r) * weight,
+            g: colorA.g + (colorB.g - colorA.g) * weight,
+            b: colorA.b + (colorB.b - colorA.b) * weight,
+          };
+
+          return `#${[mixed.r, mixed.g, mixed.b]
+            .map((channel) =>
+              Math.max(0, Math.min(255, Math.round(channel))).toString(16).padStart(2, "0"),
+            )
+            .join("")}`;
+        };
+
+        const resolveThemeColor = (themeColor) => {
+          if (typeof themeColor !== "string" || !themeColor.trim()) return presetColors.blue;
+          const trimmed = themeColor.trim().toLowerCase();
+          return presetColors[trimmed] || normalizeHexColor(trimmed) || presetColors.blue;
+        };
+
+        const applyThemeColor = (themeColor) => {
+          const base = resolveThemeColor(themeColor);
+          const root = document.documentElement;
+          root.style.setProperty("--color-primary", base);
+          root.style.setProperty("--color-primary-strong", mixColors(base, "#000000", 0.22));
+          root.style.setProperty("--color-primary-soft", mixColors(base, "#ffffff", 0.88));
+          root.style.setProperty("--color-accent", mixColors(base, "#ffffff", 0.18));
+        };
+
+        try {
+          const settings = JSON.parse(window.localStorage.getItem("app_settings") || "null");
+          const cachedTheme =
+            settings?.theme_color || window.localStorage.getItem("app_theme_color") || "blue";
+          applyThemeColor(cachedTheme);
+          window.localStorage.setItem("app_theme_color", cachedTheme);
+        } catch {
+          applyThemeColor(window.localStorage.getItem("app_theme_color") || "blue");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

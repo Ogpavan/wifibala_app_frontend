@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { User, Phone, Mail, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { fetchAppSettings } from "../utils/settings";
+import {
+  cacheAppSettings,
+  fetchAppSettings,
+  readCachedAppSettings,
+} from "../utils/settings";
 
 export default function WiFiSignUp() {
   const [form, setForm] = useState({
@@ -20,20 +24,15 @@ export default function WiFiSignUp() {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
 
     const loadLogo = async () => {
-      try {
-        const cached = JSON.parse(localStorage.getItem("app_settings") || "null");
-        if (cached?.logo_url) {
-          setLogoUrl(`${baseUrl}${cached.logo_url}`);
-          return;
-        }
-      } catch {
-        // Ignore cache parsing issues and fetch fresh settings.
+      const cached = readCachedAppSettings();
+      if (cached?.logo_url) {
+        setLogoUrl(`${baseUrl}${cached.logo_url}`);
+        return;
       }
 
       try {
-        const settings = await fetchAppSettings(baseUrl);
-        localStorage.setItem("app_settings", JSON.stringify(settings));
-        if (settings?.logo_url) {
+        const settings = cacheAppSettings(await fetchAppSettings(baseUrl));
+        if (settings.logo_url) {
           setLogoUrl(`${baseUrl}${settings.logo_url}`);
         }
       } catch {
@@ -119,13 +118,13 @@ export default function WiFiSignUp() {
           {logoUrl ? (
             <img
               src={logoUrl}
-              alt="WifiWala"
+              alt="wifibala"
               className="h-16 w-auto object-contain"
             />
           ) : (
             <img
               src="/main.png"
-              alt="WifiWala"
+              alt="wifibala"
               className="h-16 w-auto object-contain"
             />
           )}

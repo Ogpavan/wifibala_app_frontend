@@ -11,18 +11,18 @@ import { FaWhatsapp } from "react-icons/fa";
 import Ring from "./Portchange";
 import Carousel from "./Carousel";
 import Table from "./Table";
-import { fetchAppSettings, getTelHref, getWhatsAppHref } from "../../utils/settings";
+import {
+  cacheAppSettings,
+  fetchAppSettings,
+  getTelHref,
+  getWhatsAppHref,
+  readCachedAppSettings,
+} from "../../utils/settings";
 
 export default function Home() {
   const [activeCard, setActiveCard] = useState(null);
   const [walletBalance, setWalletBalance] = useState(0);
-  const [contactSettings, setContactSettings] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("app_settings")) || {};
-    } catch {
-      return {};
-    }
-  });
+  const [contactSettings, setContactSettings] = useState(() => readCachedAppSettings());
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
   const userName = user?.name || "User";
@@ -36,9 +36,10 @@ export default function Home() {
   useEffect(() => {
     const loadSettings = async () => {
       try {
-        const settings = await fetchAppSettings(import.meta.env.VITE_API_BASE_URL);
+        const settings = cacheAppSettings(
+          await fetchAppSettings(import.meta.env.VITE_API_BASE_URL),
+        );
         setContactSettings(settings);
-        localStorage.setItem("app_settings", JSON.stringify(settings));
       } catch (error) {
         console.error("Failed to load contact settings:", error);
       }

@@ -34,7 +34,11 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicy.jsx";
 import Signin from "./Auth/Signin.jsx";
 import Signup from "./Auth/Signup.jsx";
 import { applyThemeColor } from "./utils/theme.js";
-import { fetchAppSettings } from "./utils/settings.js";
+import {
+  cacheAppSettings,
+  fetchAppSettings,
+  readCachedAppSettings,
+} from "./utils/settings.js";
 
 // Default route component that redirects based on auth
 function DefaultRoute() {
@@ -155,30 +159,23 @@ function AppRoutes() {
 function App() {
   useEffect(() => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const cachedSettings = readCachedAppSettings();
+    const cachedTheme =
+      cachedSettings.theme_color || window.localStorage.getItem("app_theme_color") || "blue";
 
-    const applyStoredTheme = () => {
-      const stored = window.localStorage.getItem("app_theme_color");
-      if (stored) {
-        applyThemeColor(stored);
-      }
-    };
-
-    const cacheSettings = (settings) => {
-      window.localStorage.setItem("app_settings", JSON.stringify(settings));
-    };
+    applyThemeColor(cachedTheme);
+    window.localStorage.setItem("app_theme_color", cachedTheme);
 
     const fetchTheme = async () => {
       try {
         const settings = await fetchAppSettings(baseUrl);
-        cacheSettings(settings);
+        const normalized = cacheAppSettings(settings);
         const themeColor =
-          settings?.theme_color ||
-          window.localStorage.getItem("app_theme_color") ||
-          "blue";
+          normalized.theme_color || window.localStorage.getItem("app_theme_color") || "blue";
         applyThemeColor(themeColor);
         window.localStorage.setItem("app_theme_color", themeColor);
       } catch {
-        applyStoredTheme();
+        applyThemeColor(cachedTheme);
       }
     };
 

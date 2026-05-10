@@ -8,7 +8,13 @@ import {
   FaTriangleExclamation,
 } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
-import { fetchAppSettings, getTelHref, getWhatsAppHref } from "../../utils/settings";
+import {
+  cacheAppSettings,
+  fetchAppSettings,
+  getTelHref,
+  getWhatsAppHref,
+  readCachedAppSettings,
+} from "../../utils/settings";
 
 export default function HelpComplaintCenter() {
   const [formData, setFormData] = useState({
@@ -21,20 +27,15 @@ export default function HelpComplaintCenter() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [complaintId, setComplaintId] = useState(null);
-  const [contactSettings, setContactSettings] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("app_settings")) || {};
-    } catch {
-      return {};
-    }
-  });
+  const [contactSettings, setContactSettings] = useState(() => readCachedAppSettings());
 
   useEffect(() => {
     const loadSettings = async () => {
       try {
-        const settings = await fetchAppSettings(import.meta.env.VITE_API_BASE_URL);
+        const settings = cacheAppSettings(
+          await fetchAppSettings(import.meta.env.VITE_API_BASE_URL),
+        );
         setContactSettings(settings);
-        localStorage.setItem("app_settings", JSON.stringify(settings));
       } catch (err) {
         console.error("Failed to load contact settings:", err);
       }

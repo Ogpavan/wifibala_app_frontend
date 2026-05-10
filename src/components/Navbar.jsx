@@ -11,7 +11,7 @@ function Navbar() {
           W
         </div>
         <span className="text-lg font-semibold text-[var(--color-text)]">
-          WifiWala
+          wifibala
         </span>
       </div>
 
