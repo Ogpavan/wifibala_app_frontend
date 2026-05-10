@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaCircleCheck, FaClock, FaRotate, FaWifi } from "react-icons/fa6";
+import Popup from "../../components/Popup";
 
 export default function PortManagement() {
   const [currentPort] = useState({
@@ -15,6 +16,12 @@ export default function PortManagement() {
 
   const [selectedPort, setSelectedPort] = useState(null);
   const [showRequestForm, setShowRequestForm] = useState(false);
+  const [popupState, setPopupState] = useState({
+    open: false,
+    title: "",
+    message: "",
+    actions: null,
+  });
 
   const getProviderIcon = (provider) => {
     const icons = {
@@ -26,15 +33,54 @@ export default function PortManagement() {
     return icons[provider] || "/main.png";
   };
 
+  const closePopup = () => {
+    setPopupState({
+      open: false,
+      title: "",
+      message: "",
+      actions: null,
+    });
+  };
+
+  const submitPortChangeRequest = () => {
+    setShowRequestForm(false);
+    setSelectedPort(null);
+    setPopupState({
+      open: true,
+      title: "Request Submitted",
+      message: `Port change request to ${selectedPort} submitted successfully.`,
+      actions: null,
+    });
+  };
+
   const handlePortChangeRequest = () => {
     if (!selectedPort) {
-      alert("Please select a port");
+      setPopupState({
+        open: true,
+        title: "Select a Port",
+        message: "Please select a port before submitting your request.",
+        actions: null,
+      });
       return;
     }
 
-    alert(`Port change request to ${selectedPort} submitted successfully!`);
-    setShowRequestForm(false);
-    setSelectedPort(null);
+    setPopupState({
+      open: true,
+      title: "Confirm Port Change",
+      message: `Do you want to submit a port change request to ${selectedPort}?`,
+      actions: [
+        {
+          label: "Confirm",
+          variant: "primary",
+          onClick: submitPortChangeRequest,
+        },
+        {
+          label: "Cancel",
+          variant: "secondary",
+          onClick: closePopup,
+        },
+      ],
+    });
   };
 
   return (
@@ -173,6 +219,13 @@ export default function PortManagement() {
           </div>
         </div>
       </div>
+      <Popup
+        open={popupState.open}
+        title={popupState.title}
+        message={popupState.message}
+        onClose={closePopup}
+        actions={popupState.actions}
+      />
     </>
   );
 }
