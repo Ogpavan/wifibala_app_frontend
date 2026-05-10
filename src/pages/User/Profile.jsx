@@ -8,18 +8,10 @@ import {
 } from "react-icons/fa6";
 
 const APP_VERSION = __APP_VERSION__;
-const APP_BUILD_TIME = __APP_BUILD_TIME__;
 
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const buildLabel = new Date(APP_BUILD_TIME).toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
   useEffect(() => {
     // Get user data from localStorage
@@ -180,9 +172,6 @@ export default function Profile() {
         <div className="mt-6 text-center">
           <p className="text-xs font-semibold text-[var(--color-text-muted)]">
             wifibala v{APP_VERSION}
-          </p>
-          <p className="text-[11px] text-[var(--color-text-muted)]">
-            Build {buildLabel}
           </p>
         </div>
       </div>

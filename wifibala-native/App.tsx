@@ -103,11 +103,13 @@ export default function App() {
         ) : null}
         <WebView
           ref={webViewRef}
-          source={{ uri: APP_URL }}
-          originWhitelist={["*"]}
-          javaScriptEnabled
-          domStorageEnabled
-          sharedCookiesEnabled
+        source={{ uri: APP_URL }}
+        originWhitelist={["*"]}
+        cacheEnabled={false}
+        cacheMode="LOAD_NO_CACHE"
+        javaScriptEnabled
+        domStorageEnabled
+        sharedCookiesEnabled
           thirdPartyCookiesEnabled
           pullToRefreshEnabled
           setSupportMultipleWindows={false}

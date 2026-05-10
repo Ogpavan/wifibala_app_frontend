@@ -9,6 +9,8 @@ import {
   readCachedAppSettings,
 } from "../utils/settings";
 
+const APP_VERSION = __APP_VERSION__;
+
 export default function WiFiSignIn() {
   const [form, setForm] = useState({
     mobile: "",
@@ -270,6 +272,12 @@ export default function WiFiSignIn() {
             )}
           </div>
         )}
+
+        <div className="mt-5 text-center">
+          <p className="text-xs font-semibold text-[var(--color-text-muted)]">
+            wifibala v{APP_VERSION}
+          </p>
+        </div>
       </div>
     </div>
   );

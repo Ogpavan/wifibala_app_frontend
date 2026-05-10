@@ -7,6 +7,10 @@ import { readFileSync } from "node:fs";
 const packageJson = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf-8"));
 const appVersion = packageJson.version || "0.0.0";
 const buildTimestamp = new Date().toISOString();
+const buildMeta = {
+  version: appVersion,
+  buildTime: buildTimestamp,
+};
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -15,10 +19,23 @@ export default defineConfig({
     __APP_BUILD_TIME__: JSON.stringify(buildTimestamp),
   },
   plugins: [
+    {
+      name: "wifibala-build-meta",
+      generateBundle() {
+        this.emitFile({
+          type: "asset",
+          fileName: "version.json",
+          source: JSON.stringify(buildMeta, null, 2),
+        });
+      },
+    },
     react(),
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
+      workbox: {
+        navigateFallbackDenylist: [/^\/version\.json$/],
+      },
       manifest: {
         name: "WifiWala",
         short_name: "WifiWala",
