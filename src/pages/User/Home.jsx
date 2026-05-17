@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faHeadset,
   faPhone,
+  faUserPlus,
   faWallet,
 } from "@fortawesome/free-solid-svg-icons";
 import { FaWhatsapp } from "react-icons/fa";
@@ -28,8 +28,23 @@ export default function Home() {
   const userName = user?.name || "User";
 
   useEffect(() => {
+    const fetchWalletBalance = async () => {
+      try {
+        const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+        const res = await fetch(`${BASE_URL}/api/auth/wallet/${user.id}`);
+        const data = await res.json();
+        if (data.success) {
+          setWalletBalance(data.wallet.wallet || 0);
+        }
+      } catch (err) {
+        console.error("Failed to fetch wallet balance:", err);
+      }
+    };
+
     if (user?.id) {
       fetchWalletBalance();
+      const timer = window.setInterval(fetchWalletBalance, 15000);
+      return () => window.clearInterval(timer);
     }
   }, [user?.id]);
 
@@ -48,26 +63,13 @@ export default function Home() {
     loadSettings();
   }, []);
 
-  const fetchWalletBalance = async () => {
-    try {
-      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-      const res = await fetch(`${BASE_URL}/api/auth/wallet/${user.id}`);
-      const data = await res.json();
-      if (data.success) {
-        setWalletBalance(data.wallet.wallet || 0);
-      }
-    } catch (err) {
-      console.error("Failed to fetch wallet balance:", err);
-    }
-  };
-
   const cards = [
     {
       id: 3,
-      title: "Live Support",
-      value: "24/7",
-      subtitle: "Available Now",
-      icon: faHeadset,
+      title: "Referral",
+      value: "Invite & Earn",
+      subtitle: "Share with Friends",
+      icon: faUserPlus,
       gradient: "from-[var(--color-primary)] to-[var(--color-accent)]",
       iconBg: "bg-[var(--color-primary-soft)]",
       iconColor: "text-[var(--color-primary)]",
@@ -161,7 +163,9 @@ export default function Home() {
                 onClick={() => {
                   setActiveCard(card.id);
                   if (card.id === 3) {
-                    navigate("/user/complaints");
+                    navigate("/user/referral");
+                  } else if (card.id === 4) {
+                    navigate("/user/wallet");
                   }
                 }}
                 className={`wifi-card p-4 transition-all cursor-pointer ${activeCard === card.id

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaBoxOpen,
   FaCircleQuestion,
@@ -10,6 +11,7 @@ import {
 
 export default function SettingsSidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const menuItems = [
     { icon: FaBoxOpen, label: "My Plan", path: "/user/plan" },
@@ -19,7 +21,15 @@ export default function SettingsSidebar() {
   ];
 
   const handleMenuClick = (path) => {
-    console.log("Navigating to:", path);
+    if (path === "/logout") {
+      localStorage.removeItem("user");
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("isAuthenticated");
+      window.location.href = "/";
+      return;
+    }
+
+    navigate(path);
     setIsOpen(false);
   };
 

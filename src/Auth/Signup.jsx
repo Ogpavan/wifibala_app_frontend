@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { User, Phone, Mail, MapPin } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   cacheAppSettings,
   fetchAppSettings,
@@ -14,11 +14,13 @@ export default function WiFiSignUp() {
     email: "",
     address: "",
     password: "",
+    referral_code: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [logoUrl, setLogoUrl] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
@@ -43,11 +45,25 @@ export default function WiFiSignUp() {
     loadLogo();
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const referral = params.get("ref");
+    if (referral) {
+      setForm((prev) => ({
+        ...prev,
+        referral_code: referral.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6),
+      }));
+    }
+  }, [location.search]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "mobile") {
       const numbersOnly = value.replace(/\D/g, "").slice(0, 10);
       setForm({ ...form, [name]: numbersOnly });
+    } else if (name === "referral_code") {
+      const code = value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
+      setForm({ ...form, [name]: code });
     } else {
       setForm({ ...form, [name]: value });
     }
@@ -103,7 +119,7 @@ export default function WiFiSignUp() {
           setLoading(false);
           setError(data.message || "Signup failed");
         }
-      } catch (err) {
+      } catch {
         setLoading(false);
         setError("Server error. Please try again.");
       }
@@ -235,6 +251,27 @@ export default function WiFiSignUp() {
                   className="wifi-input pl-3 pr-3 py-2.5"
                 />
               </div>
+            </div>
+
+            {/* Referral Code */}
+            <div>
+              <label className="block text-xs font-semibold text-[var(--color-text)] mb-1">
+                Referral Code
+              </label>
+              <div className="relative">
+                <input
+                  name="referral_code"
+                  type="text"
+                  value={form.referral_code}
+                  onChange={handleChange}
+                  placeholder="Optional 6-character code"
+                  maxLength="6"
+                  className="wifi-input pl-3 pr-3 py-2.5 uppercase"
+                />
+              </div>
+              <p className="text-[10px] text-[var(--color-text-muted)] mt-1">
+                Optional. Enter a friend&apos;s code if you have one.
+              </p>
             </div>
 
             {/* Sign Up Button */}

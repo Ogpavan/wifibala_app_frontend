@@ -5,6 +5,7 @@ export default function OfferCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slides, setSlides] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
 
   // Fetch slides from API
   useEffect(() => {
@@ -62,14 +63,14 @@ export default function OfferCarousel() {
   const displaySlides = slides.length > 0 ? slides : offers;
 
   useEffect(() => {
-    if (displaySlides.length === 0) return;
+    if (displaySlides.length === 0 || isPaused) return;
 
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % displaySlides.length);
     }, 2000);
 
     return () => clearInterval(timer);
-  }, [displaySlides]);
+  }, [displaySlides, isPaused]);
 
   // Show loading state
   if (loading) {
@@ -87,7 +88,18 @@ export default function OfferCarousel() {
       {/* Root container – NO top spacing */}
       <div className="relative px-3 pt-0 pb-2">
         {/* Carousel */}
-        <div className="relative overflow-hidden rounded-md">
+        <div
+          className="relative overflow-hidden rounded-md"
+          onMouseDown={() => setIsPaused(true)}
+          onMouseUp={() => setIsPaused(false)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
+          onTouchCancel={() => setIsPaused(false)}
+          onPointerDown={() => setIsPaused(true)}
+          onPointerUp={() => setIsPaused(false)}
+          onPointerCancel={() => setIsPaused(false)}
+        >
           {/* Solid background */}
           <div className="absolute inset-0 bg-white" />
 
@@ -111,7 +123,7 @@ export default function OfferCarousel() {
                           }
                           alt={`Slide ${item.position}`}
                           className="w-full h-full object-cover"
-                          onError={(e) => {
+                          onError={() => {
                             console.error(
                               "Image failed to load:",
                               item.image_url,

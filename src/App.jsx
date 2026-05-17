@@ -15,6 +15,7 @@ import UserPlans from "./pages/User/Plans";
 import PlanDetails from "./pages/User/PlanDetails";
 import UserOffers from "./pages/User/Offers";
 import UserComplaints from "./pages/User/Complaints";
+import Referral from "./pages/User/Referral";
 import Wallet from "./pages/User/Wallet";
 // Admin Pages
 import Dashboard from "./pages/Admin/Dashboard";
@@ -22,6 +23,7 @@ import AdminUsers from "./pages/Admin/Users";
 import AdminPlans from "./pages/Admin/Plans";
 import AdminOffers from "./pages/Admin/Offers";
 import AdminComplaints from "./pages/Admin/Complaints";
+import AdminPortChangeRequests from "./pages/Admin/PortChangeRequests";
 import Profile from "./pages/User/Profile";
 import Speedtest from "./pages/User/VipPlan";
 import Notification from "./pages/User/Notification";
@@ -61,6 +63,7 @@ function AppRoutes() {
     "/admin/plans",
     "/admin/offers",
     "/admin/complaints",
+    "/admin/port-change-requests",
     "/user/plans/", // Hide footer on plan details page
   ].some((path) => location.pathname.startsWith(path));
 
@@ -72,6 +75,7 @@ function AppRoutes() {
       "/user/plans/",
       "/user/offers",
       "/user/complaints",
+      "/user/referral",
       "/user/wallet",
       "/user/profile",
       "/user/speedtest",
@@ -134,8 +138,10 @@ function AppRoutes() {
               <Route path="/user/plans/:id" element={<PlanDetails />} />
               <Route path="/user/offers" element={<UserOffers />} />
               <Route path="/user/complaints" element={<UserComplaints />} />
+              <Route path="/user/referral" element={<Referral />} />
               <Route path="/user/wallet" element={<Wallet />} />
               <Route path="/user/profile" element={<Profile />} />
+              <Route path="/user/edit-profile" element={<Profile />} />
               <Route path="/user/speedtest" element={<Speedtest />} />
               <Route path="/user/notifications" element={<Notification />} />
               <Route path="/user/vipdetails/:id" element={<VipDetails />} />
@@ -147,6 +153,10 @@ function AppRoutes() {
               <Route path="/admin/plans" element={<AdminPlans />} />
               <Route path="/admin/offers" element={<AdminOffers />} />
               <Route path="/admin/complaints" element={<AdminComplaints />} />
+              <Route
+                path="/admin/port-change-requests"
+                element={<AdminPortChangeRequests />}
+              />
             </Routes>
           </Box>
         </Container>

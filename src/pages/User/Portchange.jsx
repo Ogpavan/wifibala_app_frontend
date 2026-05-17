@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCircleCheck, FaClock, FaRotate, FaWifi } from "react-icons/fa6";
 import Popup from "../../components/Popup";
 
 export default function PortManagement() {
-  const [currentPort] = useState({
+  const [currentPort, setCurrentPort] = useState({
     provider: "Airtel",
     status: "active",
   });
@@ -16,6 +16,11 @@ export default function PortManagement() {
 
   const [selectedPort, setSelectedPort] = useState(null);
   const [showRequestForm, setShowRequestForm] = useState(false);
+  const [requestRestriction, setRequestRestriction] = useState({
+    canRequest: true,
+    message: "",
+    loading: false,
+  });
   const [popupState, setPopupState] = useState({
     open: false,
     title: "",
@@ -42,18 +47,125 @@ export default function PortManagement() {
     });
   };
 
-  const submitPortChangeRequest = () => {
-    setShowRequestForm(false);
-    setSelectedPort(null);
-    setPopupState({
-      open: true,
-      title: "Request Submitted",
-      message: `Port change request to ${selectedPort} submitted successfully.`,
-      actions: null,
-    });
+  useEffect(() => {
+    const loadLatestRequest = async () => {
+      const userInfo = JSON.parse(localStorage.getItem("user")) || {};
+      if (!userInfo.id) return;
+
+      setRequestRestriction((current) => ({ ...current, loading: true }));
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/port-change-requests/user/${userInfo.id}/latest`,
+        );
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.message || "Failed to check request status");
+        }
+
+        setRequestRestriction({
+          canRequest: Boolean(result.can_request),
+          message: result.latest_request?.status === "pending"
+            ? "You already have a pending request. Please wait for it to be reviewed before submitting another one."
+            : "",
+          loading: false,
+        });
+
+        setCurrentPort({
+          provider: result.current_port_provider || "Airtel",
+          status: "active",
+        });
+      } catch {
+        setRequestRestriction({
+          canRequest: true,
+          message: "",
+          loading: false,
+        });
+        setCurrentPort({
+          provider: "Airtel",
+          status: "active",
+        });
+      }
+    };
+
+    loadLatestRequest();
+  }, []);
+
+  const submitPortChangeRequest = async () => {
+    const userInfo = JSON.parse(localStorage.getItem("user")) || {};
+    if (!userInfo.id) {
+      setPopupState({
+        open: true,
+        title: "Login Required",
+        message: "Please sign in before submitting a port change request.",
+        actions: null,
+      });
+      return;
+    }
+
+    const request = {
+      user_id: userInfo.id || null,
+      user_name: userInfo.name || "Unknown User",
+      phone_number: userInfo.mobile || userInfo.phone || userInfo.phone_number || "",
+      current_provider: currentPort.provider,
+      requested_provider: selectedPort,
+      remarks: "",
+    };
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/port-change-requests/submit`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(request),
+        },
+      );
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to submit port change request");
+      }
+
+      setShowRequestForm(false);
+      setSelectedPort(null);
+      setRequestRestriction({
+        canRequest: false,
+        message: "You already have a pending request. Please wait for it to be reviewed before submitting another one.",
+        loading: false,
+      });
+      setCurrentPort((prev) => ({
+        ...prev,
+        status: "active",
+      }));
+      setPopupState({
+        open: true,
+        title: "Request Submitted",
+        message: `Port change request to ${selectedPort} submitted successfully.`,
+        actions: null,
+      });
+    } catch (error) {
+      setPopupState({
+        open: true,
+        title: "Submission Failed",
+        message: error.message || "Unable to submit request right now.",
+        actions: null,
+      });
+    }
   };
 
   const handlePortChangeRequest = () => {
+    if (!requestRestriction.canRequest) {
+      setPopupState({
+        open: true,
+        title: "Request Locked",
+        message: requestRestriction.message || "You already have a pending port change request.",
+        actions: null,
+      });
+      return;
+    }
+
     if (!selectedPort) {
       setPopupState({
         open: true,
@@ -99,8 +211,8 @@ export default function PortManagement() {
               </h2>
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-[var(--color-primary-soft)] rounded-md">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between p-4 bg-[var(--color-primary-soft)] rounded-md">
+                <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center overflow-hidden border border-[var(--color-border)]">
                   <img
                     src={getProviderIcon(currentPort.provider)}
@@ -113,7 +225,7 @@ export default function PortManagement() {
                     {currentPort.provider}
                   </h3>
                   <p className="text-xs text-[var(--color-text-muted)]">
-                    Primary Connection
+                    {currentPort.status === "active" ? "Primary Connection" : "Primary Connection"}
                   </p>
                 </div>
               </div>
@@ -130,11 +242,23 @@ export default function PortManagement() {
           {/* Button */}
           {!showRequestForm && (
             <button
-              onClick={() => setShowRequestForm(true)}
-              className="wifi-btn-primary w-full font-bold text-sm active:scale-95 mt-4"
+              onClick={() => {
+                if (!requestRestriction.canRequest) {
+                  setPopupState({
+                    open: true,
+                    title: "Request Locked",
+                    message: requestRestriction.message || "You already have a pending port change request.",
+                    actions: null,
+                  });
+                  return;
+                }
+                setShowRequestForm(true);
+              }}
+              disabled={!requestRestriction.canRequest || requestRestriction.loading}
+              className="wifi-btn-primary w-full font-bold text-sm active:scale-95 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaRotate className="w-4 h-4" />
-              Request Port Change
+              {requestRestriction.loading ? "Checking..." : "Request Port Change"}
             </button>
           )}
 
@@ -207,6 +331,14 @@ export default function PortManagement() {
                   Submit Request
                 </button>
               </div>
+            </div>
+          )}
+
+          {!requestRestriction.canRequest && !requestRestriction.loading && (
+            <div className="bg-amber-50 border border-amber-200 rounded-md p-4 mt-4">
+              <p className="text-xs text-amber-800">
+                {requestRestriction.message || "You already have a pending port change request."}
+              </p>
             </div>
           )}
 

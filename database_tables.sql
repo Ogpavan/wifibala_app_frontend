@@ -69,6 +69,47 @@ CREATE TABLE payment_history (
 
 -- Update users table to ensure wallet column exists
 ALTER TABLE users ADD COLUMN IF NOT EXISTS wallet DECIMAL(10,2) DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS deleted_phone_number VARCHAR(50);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS deleted_email VARCHAR(255);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code VARCHAR(12);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by_user_id INTEGER DEFAULT NULL REFERENCES users(user_id) ON DELETE SET NULL;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_referral_code_unique ON users(referral_code);
+
+-- Referral configuration and usage logs
+CREATE TABLE IF NOT EXISTS referral_settings (
+    id SERIAL PRIMARY KEY,
+    reward_amount BIGINT NOT NULL DEFAULT 0,
+    is_enabled BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS referral_rewards (
+    reward_id SERIAL PRIMARY KEY,
+    referrer_user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    referred_user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    referral_code VARCHAR(12) NOT NULL,
+    reward_amount BIGINT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS wallet_recharge_transactions (
+    recharge_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    amount BIGINT NOT NULL DEFAULT 0,
+    source VARCHAR(50) NOT NULL DEFAULT 'referral',
+    reference_table VARCHAR(50) DEFAULT 'referral_rewards',
+    reference_id INTEGER DEFAULT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_referral_rewards_referrer ON referral_rewards(referrer_user_id);
+CREATE INDEX IF NOT EXISTS idx_referral_rewards_referred ON referral_rewards(referred_user_id);
+CREATE INDEX IF NOT EXISTS idx_referral_rewards_created_at ON referral_rewards(created_at);
+CREATE INDEX IF NOT EXISTS idx_wallet_recharges_user_id ON wallet_recharge_transactions(user_id);
+CREATE INDEX IF NOT EXISTS idx_wallet_recharges_created_at ON wallet_recharge_transactions(created_at);
 
 -- Add indexes for better performance
 CREATE INDEX idx_subscriptions_user_id ON subscriptions(user_id);
@@ -78,6 +119,24 @@ CREATE INDEX idx_payment_history_user_id ON payment_history(user_id);
 CREATE INDEX idx_plans_status ON plans(status);
 CREATE INDEX idx_offers_status ON offers(status);
 CREATE INDEX idx_offers_dates ON offers(start_date, end_date);
+
+-- Port Change Requests Table
+CREATE TABLE port_change_requests (
+    request_id SERIAL PRIMARY KEY,
+    user_id INTEGER DEFAULT NULL REFERENCES users(user_id) ON DELETE SET NULL,
+    current_operator_id INTEGER NOT NULL,
+    requested_operator_id INTEGER NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending',
+    remarks TEXT,
+    reviewed_by INTEGER DEFAULT NULL REFERENCES users(user_id) ON DELETE SET NULL,
+    reviewed_at TIMESTAMP DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_port_change_requests_user_id ON port_change_requests(user_id);
+CREATE INDEX idx_port_change_requests_status ON port_change_requests(status);
+CREATE INDEX idx_port_change_requests_created_at ON port_change_requests(created_at);
 
 -- Sample data for Plans
 INSERT INTO plans (plan_name, description, price, speed, data_limit, validity, features, is_popular) VALUES

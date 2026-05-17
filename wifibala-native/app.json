@@ -22,7 +22,10 @@
       "supportsTablet": true
     },
     "extra": {
-      "appUrl": "https://app.wifibala.com"
+      "appUrl": "https://app.wifibala.com",
+      "eas": {
+        "projectId": "4ea4304b-7ebd-41de-9425-4ba103eef77e"
+      }
     }
   }
 }
