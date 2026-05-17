@@ -146,7 +146,7 @@ export default function HelpComplaintCenter() {
   }
 
   return (
-    <div className="wifi-page pb-18">
+    <div className="wifi-page pb-32">
       {/* Header */}
       <div className="wifi-hero wifi-hero-primary px-6 py-6 rounded-b-[28px] text-center">
         <h1 className="wifi-page-title text-xl font-bold mb-1">Help & Support</h1>
@@ -267,7 +267,7 @@ export default function HelpComplaintCenter() {
         </div>
 
         {/* Need More Help Section */}
-        <div className="border-t border-[var(--color-border)] pt-6">
+        <div className="border-t border-[var(--color-border)] pt-6 mb-10">
           <h2 className="text-base font-bold text-[var(--color-text)] mb-3">
             Need More Help?
           </h2>
