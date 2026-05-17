@@ -1,115 +1,100 @@
-import {
-  getTelHref,
-  getWhatsAppHref,
-  readCachedAppSettings,
-} from "../utils/settings";
+import { getTelHref, getWhatsAppHref } from "../utils/settings";
 
-const LAST_UPDATED = "May 10, 2026";
+const LAST_UPDATED = "May 17, 2026";
+const COMPANY_NAME = "Wifibala";
+const SUPPORT_EMAIL = "ushopstore.in@gmail.com";
+const SUPPORT_PHONE = "636276376";
+const SUPPORT_WHATSAPP = "6396276376";
 
 const sections = [
   {
-    title: "1. Acceptance of These Terms",
+    title: "1. Acceptance",
     body: [
-      "These Terms and Conditions govern your access to and use of the wifibala mobile application, website integrations, and related broadband, internet, support, and subscription request services made available through the app.",
-      "By creating an account, signing in, browsing plans, submitting a complaint, or requesting a subscription, installation, or support service, you agree to be bound by these Terms. If you do not agree, do not use the app.",
+      "These Terms govern your use of the Wifibala mobile application and related support, subscription, and service-request features.",
+      "By creating an account, signing in, browsing plans, submitting a complaint, or requesting a service, you agree to these Terms. If you do not agree, do not use the app.",
     ],
   },
   {
-    title: "2. Eligibility and Account Registration",
+    title: "2. Eligibility and Account Information",
     body: [
-      "You must provide accurate and complete information when registering, including your name, mobile number, email address, and service address where required.",
-      "You are responsible for maintaining the confidentiality of your login credentials and for all activity carried out through your account. You must promptly notify support if you believe your account has been accessed without authorization.",
-      "You may use the app only for lawful purposes and only in connection with genuine service enquiries, plan requests, subscription management, and customer support.",
+      "You must provide accurate account information, including your name, mobile number, email address, and service address, when requested.",
+      "You are responsible for keeping your account secure and for all activity performed through your account.",
     ],
   },
   {
-    title: "3. Services Available Through the App",
+    title: "3. Services We Provide",
     body: [
-      "wifibala may allow you to view plans, compare broadband or internet offerings, check promotional offers, submit subscription requests, view certain account-related information such as wallet balance where enabled, and raise complaints or support requests.",
-      "Availability of plans, speeds, prices, installation timelines, service areas, bundled benefits, and promotional offers may vary by location and may change without prior notice.",
-      "Information displayed in the app is provided for convenience. Final activation, installation, verification, and service feasibility remain subject to operational checks and confirmation by the service provider.",
+      "The app may allow you to view plans, submit service or subscription requests, raise complaints, view wallet and referral information where available, and contact support.",
+      "Plan availability, pricing, service areas, and activation timelines may change based on location and operational conditions.",
     ],
   },
   {
-    title: "4. Subscription Requests, Billing, and Payments",
+    title: "4. Subscription Requests",
     body: [
-      "When you submit a plan or subscription request through the app, you authorize wifibala or its representatives to contact you to verify the request and complete activation or installation.",
-      "A request submitted through the app is not an unconditional acceptance or guaranteed activation of service. It may be rejected, delayed, or modified if the plan is unavailable, the address is not serviceable, payment is not confirmed, or verification fails.",
-      "If payments, recharges, wallet credits, refunds, or third-party billing services are introduced or used, those transactions may also be subject to the separate terms of the relevant payment processor, bank, UPI provider, gateway, or billing partner.",
-      "You are responsible for reviewing plan details, validity, pricing, taxes, usage limits, and renewal conditions before submitting a request.",
+      "Submitting a request through the app does not guarantee activation, installation, or approval.",
+      "A request may be rejected or delayed if the service is not available, details are incomplete, verification fails, or the address is not serviceable.",
     ],
   },
   {
-    title: "5. Customer Support and Complaint Handling",
+    title: "5. Billing, Wallet, Refunds, and Payments",
     body: [
-      "The app may allow you to submit complaint details, support queries, or service-related issues. You agree to provide accurate descriptions and not to submit misleading, abusive, unlawful, or repetitive complaints.",
-      "Complaint and support response times are estimates only. Resolution may depend on issue severity, service availability, third-party dependencies, field staff scheduling, and verification requirements.",
+      "If the app shows wallet balances, rewards, or recharge information, those values represent a service wallet that may be used to apply discounts, promotional credits, or other account benefits now, and may also be used for future grocery shopping features when those features are introduced.",
+      "If payments, refunds, or wallet top-ups are processed through third-party providers, those transactions are also subject to the provider's own terms and policies.",
+      "Refunds, if any, will be handled according to the service circumstances and applicable law.",
     ],
   },
   {
-    title: "6. Acceptable Use Restrictions",
+    title: "6. Complaint and Support Usage",
     body: [
-      "You must not misuse the app or connected services. This includes attempting unauthorized access, interfering with networks or servers, introducing malicious code, impersonating another person, scraping app content at scale, or using the app to support unlawful activity.",
-      "You must not submit false identity details, false subscription requests, false complaints, or inaccurate address information.",
+      "You may use the app to submit complaints or support requests.",
+      "You agree to provide truthful and complete information and not to submit abusive, fraudulent, or repetitive false requests.",
     ],
   },
   {
-    title: "7. Suspension, Restriction, or Termination",
+    title: "7. Acceptable Use",
     body: [
-      "wifibala may suspend, restrict, or terminate access to the app or specific services if you violate these Terms, provide false information, misuse support channels, create security risks, or where access must be limited for legal, operational, billing, or fraud-prevention reasons.",
-      "Termination or suspension of app access does not automatically cancel any underlying service obligations, dues, or legal responsibilities that may already apply between you and the service provider.",
+      "You must not misuse the app, attempt unauthorized access, upload malicious content, interfere with services, or use the app for unlawful activity.",
+      "You must not submit false identity, phone, email, address, or request details.",
     ],
   },
   {
-    title: "8. Intellectual Property",
+    title: "8. Suspension and Termination",
     body: [
-      "The app interface, branding, text, graphics, plan presentation, logos owned by wifibala, and related software components are protected by applicable intellectual property laws.",
-      "Third-party brand names, operator names, OTT logos, and trademarks shown in the app remain the property of their respective owners and are used for identification or informational purposes only.",
+      "We may suspend or terminate access if you violate these Terms, misuse the app, create security risks, or provide false information.",
+      "Termination of app access does not automatically cancel any service obligations or dues that already exist.",
     ],
   },
   {
-    title: "9. Disclaimers",
+    title: "9. Intellectual Property",
     body: [
-      "The app and its content are provided on an as available and as is basis to the maximum extent permitted by law. wifibala does not guarantee uninterrupted availability, error-free operation, real-time accuracy of plan listings, or uninterrupted internet connectivity.",
-      "Service interruptions may occur because of maintenance, outages, infrastructure issues, vendor dependency, force majeure events, technical failures, or factors outside reasonable control.",
+      "The app design, text, graphics, and software belong to Wifibala unless stated otherwise.",
+      "Third-party names, logos, and marks belong to their respective owners and are used only for identification.",
     ],
   },
   {
-    title: "10. Limitation of Liability",
+    title: "10. Privacy",
     body: [
-      "To the maximum extent permitted by applicable law, wifibala and its affiliates, personnel, and partners will not be liable for indirect, incidental, special, consequential, or punitive losses arising from app use, service delays, plan unavailability, data loss, or unauthorized account activity caused by your failure to secure your credentials.",
-      "Nothing in these Terms excludes liability where exclusion is not permitted under applicable law.",
+      "Your use of the app is also governed by the Wifibala Privacy Policy.",
     ],
   },
   {
-    title: "11. Privacy",
+    title: "11. Changes to the Terms",
     body: [
-      "Your use of the app is also governed by the wifibala Privacy Policy, which explains how personal information is collected, used, stored, and shared.",
+      "We may update these Terms from time to time to reflect app changes, legal requirements, or operational updates.",
+      "Continued use of the app after an update means you accept the revised Terms.",
     ],
   },
   {
-    title: "12. Changes to These Terms",
+    title: "12. Governing Law",
     body: [
-      "wifibala may update these Terms from time to time to reflect app changes, operational requirements, legal obligations, or security needs. The updated version becomes effective when published in the app unless otherwise stated.",
-      "Your continued use of the app after an update means you accept the revised Terms.",
-    ],
-  },
-  {
-    title: "13. Governing Law",
-    body: [
-      "These Terms are intended to be interpreted in accordance with applicable laws of India. Any dispute related to the app or these Terms will be subject to the jurisdiction of the competent courts where the service provider operates, unless otherwise required by applicable consumer law.",
+      "These Terms are governed by the laws of India. Any dispute will be subject to the applicable courts and consumer law requirements.",
     ],
   },
 ];
 
 export default function TermsPage() {
-  const settings = readCachedAppSettings();
-  const companyName = settings.company_name || "wifibala";
-  const phone = settings.primary_number || "";
-  const email = settings.email_id || "";
-  const whatsapp = settings.whatsapp_number || settings.primary_number || "";
-  const telHref = getTelHref(phone);
-  const whatsappHref = getWhatsAppHref(whatsapp);
+  const telHref = getTelHref(SUPPORT_PHONE);
+  const whatsappHref = getWhatsAppHref(SUPPORT_WHATSAPP);
 
   return (
     <div className="wifi-page bg-white px-4 py-6">
@@ -117,7 +102,7 @@ export default function TermsPage() {
         <div className="wifi-card p-6 md:p-8">
           <h1 className="wifi-page-title text-3xl font-bold mb-2">Terms &amp; Conditions</h1>
           <p className="text-sm text-[var(--color-text-muted)] mb-2">
-            These terms explain the rules for using the {companyName} application and related
+            These terms explain the rules for using the {COMPANY_NAME} application and related
             service request features.
           </p>
           <p className="text-xs text-[var(--color-text-muted)] mb-8">
@@ -143,40 +128,31 @@ export default function TermsPage() {
               <div className="space-y-3">
                 <p>
                   If you have questions about these Terms, billing issues, complaints, or service
-                  requests, contact {companyName} using the support details provided in the app.
+                  requests, contact {COMPANY_NAME} using the support details below.
                 </p>
-                {phone ? (
-                  <p>
-                    Phone:{" "}
-                    <a className="text-[var(--color-primary)]" href={telHref}>
-                      {phone}
-                    </a>
-                  </p>
-                ) : null}
-                {whatsapp ? (
-                  <p>
-                    WhatsApp:{" "}
-                    <a
-                      className="text-[var(--color-primary)]"
-                      href={whatsappHref}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {whatsapp}
-                    </a>
-                  </p>
-                ) : null}
-                {email ? (
-                  <p>
-                    Email:{" "}
-                    <a
-                      className="text-[var(--color-primary)]"
-                      href={`mailto:${email}`}
-                    >
-                      {email}
-                    </a>
-                  </p>
-                ) : null}
+                <p>
+                  Phone:{" "}
+                  <a className="text-[var(--color-primary)]" href={telHref}>
+                    {SUPPORT_PHONE}
+                  </a>
+                </p>
+                <p>
+                  WhatsApp:{" "}
+                  <a
+                    className="text-[var(--color-primary)]"
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {SUPPORT_WHATSAPP}
+                  </a>
+                </p>
+                <p>
+                  Email:{" "}
+                  <a className="text-[var(--color-primary)]" href={`mailto:${SUPPORT_EMAIL}`}>
+                    {SUPPORT_EMAIL}
+                  </a>
+                </p>
               </div>
             </section>
           </div>
